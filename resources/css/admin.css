@@ -1,0 +1,47 @@
+/* resources/css/admin.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
+
+body.admin-body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7fafc;
+    color: #181c1e;
+}
+
+.font-headline {
+    font-family: 'Manrope', sans-serif;
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(135deg, #002045 0%, #1a365d 100%);
+}
+
+/* Layout Kalender */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+}
+
+.time-cell {
+    height: 100px;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+}
+
+.booking-block {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    overflow: hidden;
+    z-index: 10;
+}
+
+body.ruangan-body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc; /* slate-50 */
+    color: #0f172a; /* slate-900 */
+}
