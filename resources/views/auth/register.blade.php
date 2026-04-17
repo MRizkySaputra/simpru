@@ -14,7 +14,7 @@
     <div class="w-full max-w-md z-10">
 
         <div class="mb-10 text-center">
-            <h1 class="font-headline text-3xl font-extrabold tracking-tight text-[#1a365d] mb-2">SiPinjam Ruang</h1>
+            <h1 class="font-headline text-3xl font-extrabold tracking-tight text-[#1a365d] mb-2">SIMPRU</h1>
             <p class="text-[#555f70] text-sm">Universitas Ma'soem</p>
         </div>
 

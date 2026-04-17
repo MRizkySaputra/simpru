@@ -21,7 +21,7 @@
                 <div class="mb-6 w-16 h-16 bg-[#e5e9eb] rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined text-[#002045] text-4xl scale-150">account_balance</span>
                 </div>
-                <h1 class="font-headline text-2xl font-extrabold text-[#002045] tracking-tight">SiPinjam Ruang</h1>
+                <h1 class="font-headline text-2xl font-extrabold text-[#002045] tracking-tight">SIMPRU</h1>
                 <p class="text-variant text-sm mt-2">Sistem Peminjaman & Monitoring Kelas</p>
             </div>
 

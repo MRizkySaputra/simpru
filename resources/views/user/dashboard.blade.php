@@ -16,7 +16,7 @@
                     <span class="material-symbols-outlined">school</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-[#002045] font-headline leading-tight">SiPinjam Ruang</h1>
+                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SIMPRU</h1>
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Portal Mahasiswa</p>
                 </div>
             </div>
@@ -35,10 +35,10 @@
                 <span class="material-symbols-outlined">history</span>
                 <span class="font-headline text-sm font-medium">Riwayat Peminjaman</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#002045] hover:bg-slate-50 rounded-lg transition-colors duration-200" href="/user/notifikasi">
+            <!-- <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#002045] hover:bg-slate-50 rounded-lg transition-colors duration-200" href="/user/notifikasi">
                 <span class="material-symbols-outlined">notifications</span>
                 <span class="font-headline text-sm font-medium">Notifikasi</span>
-            </a>
+            </a> -->
         </nav>
 
         <div class="p-4 mt-auto border-t border-slate-100">

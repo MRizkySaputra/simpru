@@ -16,7 +16,7 @@
                     <span class="material-symbols-outlined">school</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-[#002045] font-headline leading-tight">SiPinjam Ruang</h1>
+                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SIMPRU</h1>
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Portal Mahasiswa</p>
                 </div>
             </div>
@@ -35,10 +35,10 @@
                 <span class="material-symbols-outlined">history</span>
                 <span class="font-headline text-sm font-medium">Riwayat Peminjaman</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#002045] hover:bg-slate-100 rounded-lg transition-colors duration-200" href="/user/notifikasi">
+            <!-- <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#002045] hover:bg-slate-100 rounded-lg transition-colors duration-200" href="/user/notifikasi">
                 <span class="material-symbols-outlined">notifications</span>
                 <span class="font-headline text-sm font-medium">Notifikasi</span>
-            </a>
+            </a> -->
             <!-- <a class="flex items-center gap-3 px-4 py-3 text-[#002045] font-bold border-r-4 border-[#002045] bg-blue-50/50 rounded-lg transition-all duration-200" href="#">
                 <span class="material-symbols-outlined">person</span>
                 <span class="font-headline text-sm font-medium">Profil</span>
@@ -61,10 +61,10 @@
             <h2 class="text-xl font-extrabold text-[#002045] font-headline hidden md:block">Profil Pengguna</h2>
         </div>
         <div class="flex items-center gap-6">
-            <button class="relative text-slate-600 hover:text-[#002045] transition-colors">
+            <a href="/user/notifikasi" class="relative text-slate-600 hover:text-[#002045] transition-colors">
                 <span class="material-symbols-outlined">notifications</span>
                 <span class="absolute top-0 right-0 w-2 h-2 bg-red-600 rounded-full"></span>
-            </button>
+            </a>
             <div class="h-8 w-px bg-slate-200 mx-2"></div>
             <div class="flex items-center gap-3">
                 <p class="text-sm font-semibold text-[#002045] font-headline hidden sm:block">Ahmad Fauzi</p>

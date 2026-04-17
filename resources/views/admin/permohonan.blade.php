@@ -18,7 +18,7 @@
                     <span class="material-symbols-outlined">account_balance</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SiPinjam Ruang</h1>
+                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SIMPRU</h1>
                     <p class="text-xs text-slate-500 font-medium">System Management</p>
                 </div>
             </div>
@@ -44,11 +44,14 @@
 
             <div class="mt-auto pt-6 border-t border-slate-200/50">
                 <div class="flex items-center gap-3 px-2">
-                    <img alt="Admin Avatar" class="w-10 h-10 rounded-full object-cover" src="https://ui-avatars.com/api/?name=Admin+Curator&background=002045&color=fff" />
+                    <img alt="Admin Avatar" class="w-10 h-10 rounded-full object-cover" src="https://ui-avatars.com/api/?name=Administrator&background=002045&color=fff" />
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-[#002045] truncate">Administrator</p>
                         <p class="text-xs text-slate-500 truncate">admin@masoem.ac.id</p>
                     </div>
+                    <a class="text-slate-400 hover:text-red-600 transition-colors" href="/login">
+                        <span class="material-symbols-outlined">logout</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -180,7 +183,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                
+
                                 <tr class="hover:bg-slate-50/50 transition-colors">
                                     <td class="px-6 py-5">
                                         <div class="flex items-center gap-3">

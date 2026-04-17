@@ -16,7 +16,7 @@
                     <span class="material-symbols-outlined">school</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-[#002045] font-headline leading-tight">SiPinjam Ruang</h1>
+                    <h1 class="text-xl font-bold text-[#002045] font-headline leading-tight">SIMPRU</h1>
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Portal Mahasiswa</p>
                 </div>
             </div>

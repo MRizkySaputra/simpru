@@ -21,7 +21,7 @@
                 <div class="w-16 h-16 bg-primary-gradient rounded-xl flex items-center justify-center mb-4 shadow-lg">
                     <span class="material-symbols-outlined text-white text-4xl">domain</span>
                 </div>
-                <h2 class="font-headline text-xl font-extrabold text-[#002045] tracking-tight">SiPinjam Ruang</h2>
+                <h2 class="font-headline text-xl font-extrabold text-[#002045] tracking-tight">SIMPRU</h2>
             </div>
 
             <div class="text-center mb-8">

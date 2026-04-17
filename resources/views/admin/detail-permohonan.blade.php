@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -7,17 +8,18 @@
 
     @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
 </head>
+
 <body class="admin-body antialiased">
 
     <aside class="fixed left-0 top-0 h-full z-40 flex flex-col bg-slate-100 w-64 border-r-0 shadow-sm">
         <div class="px-6 py-8 flex flex-col h-full">
-            
+
             <div class="mb-10 flex items-center gap-3">
                 <div class="w-10 h-10 bg-primary-gradient rounded flex items-center justify-center text-white shadow-md">
                     <span class="material-symbols-outlined">account_balance</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SiPinjam Ruang</h1>
+                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SIMPRU</h1>
                     <p class="text-xs text-slate-500 font-medium">System Management</p>
                 </div>
             </div>
@@ -43,23 +45,26 @@
 
             <div class="mt-auto pt-6 border-t border-slate-200/50">
                 <div class="flex items-center gap-3 px-2">
-                    <img alt="Admin Avatar" class="w-10 h-10 rounded-full object-cover" src="https://ui-avatars.com/api/?name=Administrator&background=002045&color=fff"/>
+                    <img alt="Admin Avatar" class="w-10 h-10 rounded-full object-cover" src="https://ui-avatars.com/api/?name=Administrator&background=002045&color=fff" />
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-[#002045] truncate">Administrator</p>
                         <p class="text-xs text-slate-500 truncate">admin@masoem.ac.id</p>
                     </div>
+                    <a class="text-slate-400 hover:text-red-600 transition-colors" href="/login">
+                        <span class="material-symbols-outlined">logout</span>
+                    </a>
                 </div>
             </div>
         </div>
     </aside>
 
     <main class="ml-64 pb-24 min-h-screen bg-[#f7fafc]">
-        
+
         <header class="flex justify-between items-center w-full px-8 py-4 sticky top-0 z-30 bg-white shadow-sm border-b border-slate-100">
             <div class="flex items-center gap-4 flex-1">
                 <h2 class="text-xl font-extrabold text-[#002045] font-headline mr-4 hidden md:block">Detail Permohonan</h2>
             </div>
-            
+
             <div class="flex items-center gap-6">
                 <button class="relative text-slate-600 hover:text-[#002045] transition-colors">
                     <span class="material-symbols-outlined">notifications</span>
@@ -69,7 +74,7 @@
         </header>
 
         <div class="max-w-[1600px] mx-auto px-8 py-8">
-            
+
             <nav class="flex items-center gap-2 mb-8 text-sm font-medium text-slate-500">
                 <a class="hover:text-[#002045] transition-colors" href="{{ url('/admin/permohonan') }}">Permohonan Masuk</a>
                 <span class="material-symbols-outlined text-sm">chevron_right</span>
@@ -77,7 +82,7 @@
             </nav>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                
+
                 <div class="lg:col-span-7 space-y-6">
                     <div class="bg-white rounded-xl p-8 shadow-sm border border-slate-200">
                         <div class="flex justify-between items-start mb-10">
@@ -138,14 +143,14 @@
                             <span class="material-symbols-outlined text-[#002045] text-3xl">description</span>
                             <h3 class="text-lg font-bold text-[#002045] font-headline">Surat Permohonan</h3>
                         </div>
-                        
+
                         <div class="group relative aspect-[3/4] bg-slate-50 rounded-lg overflow-hidden mb-6 border border-slate-200 flex flex-col items-center justify-center p-6 text-center transition-all hover:border-[#002045]/30">
                             <div class="w-16 h-16 bg-white shadow-sm rounded-full flex items-center justify-center mb-4 text-[#002045]">
                                 <span class="material-symbols-outlined text-4xl">picture_as_pdf</span>
                             </div>
                             <p class="font-bold text-[#002045] mb-1">Surat Peminjaman Lab.pdf</p>
                             <p class="text-xs text-slate-500">354 KB</p>
-                            
+
                             <div class="absolute inset-0 bg-[#002045]/5 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"></div>
                         </div>
 
@@ -181,4 +186,5 @@
 
     </main>
 </body>
+
 </html>

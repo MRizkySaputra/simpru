@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Laporan & Analitik - SiPinjam Ruang</title>
+    <title>Laporan & Analitik - SIMPRU</title>
 
     @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
 </head>
@@ -17,7 +17,7 @@
                     <span class="material-symbols-outlined">account_balance</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SiPinjam Ruang</h1>
+                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SIMPRU</h1>
                     <p class="text-xs text-slate-500 font-medium">System Management</p>
                 </div>
             </div>
@@ -48,6 +48,9 @@
                         <p class="text-sm font-bold text-[#002045] truncate">Administrator</p>
                         <p class="text-xs text-slate-500 truncate">admin@masoem.ac.id</p>
                     </div>
+                    <a class="text-slate-400 hover:text-red-600 transition-colors" href="/login">
+                        <span class="material-symbols-outlined">logout</span>
+                    </a>
                 </div>
             </div>
         </div>

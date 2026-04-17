@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -7,6 +8,7 @@
 
     @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
 </head>
+
 <body class="admin-body antialiased bg-[#f7fafc]">
 
     <aside class="fixed left-0 top-0 h-full z-40 flex flex-col bg-slate-100 w-64 border-r-0 shadow-sm">
@@ -16,7 +18,7 @@
                     <span class="material-symbols-outlined">account_balance</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SiPinjam Ruang</h1>
+                    <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SIMPRU</h1>
                     <p class="text-xs text-slate-500 font-medium">System Management</p>
                 </div>
             </div>
@@ -42,18 +44,21 @@
 
             <div class="mt-auto pt-6 border-t border-slate-200/50">
                 <div class="flex items-center gap-3 px-2">
-                    <img alt="Admin Avatar" class="w-10 h-10 rounded-full object-cover" src="https://ui-avatars.com/api/?name=Administrator&background=002045&color=fff"/>
+                    <img alt="Admin Avatar" class="w-10 h-10 rounded-full object-cover" src="https://ui-avatars.com/api/?name=Administrator&background=002045&color=fff" />
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-[#002045] truncate">Administrator</p>
                         <p class="text-xs text-slate-500 truncate">admin@masoem.ac.id</p>
                     </div>
+                    <a class="text-slate-400 hover:text-red-600 transition-colors" href="/login">
+                        <span class="material-symbols-outlined">logout</span>
+                    </a>
                 </div>
             </div>
         </div>
     </aside>
 
     <main class="ml-64 min-h-screen">
-        
+
         <header class="flex justify-between items-center w-full px-8 py-4 sticky top-0 z-30 bg-white/80 backdrop-blur-md shadow-sm border-b border-slate-100">
             <div class="flex items-center gap-6">
                 <h2 class="text-lg font-extrabold text-[#002045] font-headline hidden md:block">Manajemen Ruangan</h2>
@@ -74,7 +79,7 @@
         </header>
 
         <div class="p-8 max-w-[1600px] mx-auto">
-            
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between mb-4">
@@ -134,7 +139,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
@@ -176,7 +181,7 @@
                                 <td class="px-6 py-5">
                                     <div class="flex items-center">
                                         <label class="relative inline-flex items-center cursor-pointer">
-                                            <input checked type="checkbox" class="sr-only peer"/>
+                                            <input checked type="checkbox" class="sr-only peer" />
                                             <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
                                         </label>
                                         <span class="ml-3 text-[11px] font-extrabold text-green-600 uppercase tracking-tight">Aktif</span>
@@ -189,7 +194,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            
+
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-5 text-sm font-medium text-slate-600">R-002</td>
                                 <td class="px-6 py-5">
@@ -218,7 +223,7 @@
                                 <td class="px-6 py-5">
                                     <div class="flex items-center">
                                         <label class="relative inline-flex items-center cursor-pointer">
-                                            <input checked type="checkbox" class="sr-only peer"/>
+                                            <input checked type="checkbox" class="sr-only peer" />
                                             <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
                                         </label>
                                         <span class="ml-3 text-[11px] font-extrabold text-green-600 uppercase tracking-tight">Aktif</span>
@@ -255,25 +260,25 @@
 
     <div id="addRoomModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-[#002045]/40 backdrop-blur-sm transition-opacity">
         <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden pointer-events-auto flex flex-col max-h-[90vh] m-4">
-            
+
             <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-white">
                 <h3 class="text-xl font-extrabold text-[#002045] font-headline">Tambah Ruangan Baru</h3>
                 <button type="button" onclick="document.getElementById('addRoomModal').classList.add('hidden'); document.getElementById('addRoomModal').classList.remove('flex');" class="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            
+
             <div class="p-8 overflow-y-auto bg-slate-50/50">
                 <form action="#" method="POST" class="space-y-6">
                     @csrf
-                    
+
                     <div class="grid grid-cols-2 gap-5">
                         <div class="col-span-2">
                             <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Nama Ruangan</label>
                             <input name="nama_ruangan" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] transition-all outline-none" placeholder="Contoh: A2 - Auditorium Serbaguna" type="text" required>
                             <p class="text-[10px] text-slate-400 mt-1.5 italic">*Kode ruangan (seperti A203) akan digenerate otomatis berdasarkan pilihan gedung & lantai.</p>
                         </div>
-                        
+
                         <div class="col-span-1">
                             <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Lantai</label>
                             <select name="lantai" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] transition-all outline-none">
@@ -282,12 +287,12 @@
                                 <option value="3">Lantai 3</option>
                             </select>
                         </div>
-                        
+
                         <div class="col-span-1">
                             <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Kapasitas (Orang)</label>
                             <input name="kapasitas" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] transition-all outline-none" placeholder="1" type="number" min="1" required>
                         </div>
-                        
+
                         <div class="col-span-2">
                             <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Gedung</label>
                             <select name="gedung" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] transition-all outline-none">
@@ -321,7 +326,7 @@
                     </div>
                 </form>
             </div>
-            
+
             <div class="p-6 bg-white border-t border-slate-200 flex justify-end gap-3">
                 <button type="button" onclick="document.getElementById('addRoomModal').classList.add('hidden'); document.getElementById('addRoomModal').classList.remove('flex');" class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 border border-slate-200 hover:bg-slate-50 transition-colors">
                     Batal
@@ -347,11 +352,11 @@
             <div class="px-8 py-8 space-y-6 bg-slate-50/50">
                 <form>
                     @csrf
-                    @method('PUT') 
-                    
+                    @method('PUT')
+
                     <div class="space-y-2 mb-4">
                         <label class="text-[11px] uppercase tracking-wider font-bold text-slate-500 block">Nama Ruangan</label>
-                        <input class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] outline-none" type="text" value="Auditorium Utama A.1"/>
+                        <input class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] outline-none" type="text" value="Auditorium Utama A.1" />
                     </div>
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div class="space-y-2">
@@ -372,7 +377,7 @@
                     <div class="space-y-2 mb-6">
                         <label class="text-[11px] uppercase tracking-wider font-bold text-slate-500 block">Kapasitas Maksimal</label>
                         <div class="relative">
-                            <input class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] outline-none" type="number" value="250"/>
+                            <input class="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] outline-none" type="number" value="250" />
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">Kursi</span>
                         </div>
                     </div>
@@ -382,7 +387,7 @@
                             <p class="text-xs text-slate-500">Tentukan jika ruangan dapat dipesan</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input checked type="checkbox" class="sr-only peer"/>
+                            <input checked type="checkbox" class="sr-only peer" />
                             <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                         </label>
                     </div>
@@ -430,4 +435,5 @@
     </script>
 
 </body>
+
 </html>
