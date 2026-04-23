@@ -22,7 +22,7 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-black text-[#002045] font-headline leading-tight">SIMPRU</h1>
-                    <p class="text-xs text-slate-500 font-medium">System Management</p>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Portal Admin</p>
                 </div>
             </div>
 

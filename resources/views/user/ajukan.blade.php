@@ -2,195 +2,301 @@
 
 @section('title', 'Ajukan Peminjaman')
 
-@section('container_class', 'h-[calc(100vh-73px)] flex flex-col overflow-hidden')
+@section('container_class', 'p-8 max-w-[1600px] mx-auto')
 
 @section('content')
 
+    {{-- Header --}}
+    <div class="mb-6">
+        <h2 class="text-3xl font-extrabold text-[#002045] font-headline tracking-tight">Ajukan Peminjaman</h2>
+        <p class="text-slate-500 text-sm mt-1">Pilih ruangan dan waktu yang tersedia, lalu lanjutkan pengajuan.</p>
+    </div>
+
     {{-- Filter Bar --}}
-    <section class="px-8 py-5 bg-white border-b border-slate-200 shrink-0">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
         <div class="flex flex-wrap items-end gap-4">
-            <div class="flex-1 min-w-[180px]">
-                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Pilih Gedung</label>
-                <select class="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none">
-                    <option>Gedung A (Rektorat)</option>
-                    <option>Gedung B (Fakultas Teknik)</option>
-                    <option>Gedung C (Fakultas Ekonomi)</option>
+
+            {{-- Pilih Gedung --}}
+            <div class="flex-1 min-w-[160px]">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Gedung</label>
+                <select class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                    <option value="">Semua Gedung</option>
+                    <option value="A">Gedung A (Rektorat)</option>
+                    <option value="B">Gedung B (Fakultas Teknik)</option>
+                    <option value="C">Gedung C (Fakultas Ekonomi)</option>
                 </select>
             </div>
-            <div class="flex-1 min-w-[180px]">
-                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Pilih Ruangan</label>
-                <select class="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none">
-                    <option>Ruang Teater - Gedung A</option>
-                    <option>Lab Komputer 02 - Gedung B</option>
+
+            {{-- Pilih Ruangan --}}
+            <div class="flex-1 min-w-[160px]">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Ruangan</label>
+                <select class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                    <option value="">Semua Ruangan</option>
+                    <option value="A-101">Auditorium Utama</option>
+                    <option value="A-102">Ruang Teater</option>
+                    <option value="B-201">Lab Komputer 01</option>
+                    <option value="B-202">Lab Komputer 02</option>
+                    <option value="B-301">R. Seminar B</option>
+                    <option value="C-101">R. Rapat Senat</option>
                 </select>
             </div>
-            <div class="flex-1 min-w-[180px]">
+
+            {{-- Pilih Tanggal --}}
+            <div class="flex-1 min-w-[160px]">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Tanggal</label>
-                <input class="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none" type="date" value="2026-10-23">
+                <input class="w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none"
+                       type="date" value="2026-10-24">
             </div>
+
+            {{-- Min Kapasitas --}}
             <div class="w-40">
                 <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Min. Kapasitas</label>
-                <div class="flex items-center bg-slate-50 border border-slate-200 rounded-lg py-3 px-4">
+                <div class="flex items-center bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4">
                     <span class="material-symbols-outlined text-sm text-slate-400 mr-2">group</span>
-                    <input class="w-full bg-transparent border-none p-0 focus:ring-0 text-sm font-medium outline-none" placeholder="40" type="number">
+                    <input class="w-full bg-transparent border-none p-0 focus:ring-0 text-sm font-medium outline-none" placeholder="10" type="number">
                 </div>
             </div>
-            <button class="bg-primary-gradient text-white px-6 py-3 rounded-lg font-bold text-sm shadow-md hover:opacity-95 flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">filter_alt</span> Filter
+
+            {{-- Tombol Filter --}}
+            <button class="bg-primary-gradient text-white px-6 py-2.5 rounded-lg font-bold text-sm shadow-md hover:opacity-95 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">search</span> Cari Jadwal
             </button>
-        </div>
-    </section>
 
-    {{-- Konten Utama: Kalender + Panel Kanan --}}
-    <div class="flex flex-1 overflow-hidden">
-
-        {{-- Kalender --}}
-        <div class="flex-1 overflow-auto p-8">
-            <div class="min-w-[700px] bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-
-                {{-- Header Hari --}}
-                <div class="grid grid-cols-8 border-b border-slate-200 mb-4 pb-4">
-                    <div class="p-2"></div>
-                    @php
-                        $days = [
-                            ['label' => 'Sen', 'date' => '23', 'active' => false],
-                            ['label' => 'Sel', 'date' => '24', 'active' => true],
-                            ['label' => 'Rab', 'date' => '25', 'active' => false],
-                            ['label' => 'Kam', 'date' => '26', 'active' => false],
-                            ['label' => 'Jum', 'date' => '27', 'active' => false],
-                            ['label' => 'Sab', 'date' => '28', 'active' => false],
-                            ['label' => 'Min', 'date' => '29', 'active' => false],
-                        ];
-                    @endphp
-                    @foreach ($days as $day)
-                        <div class="p-2 text-center {{ $day['active'] ? 'bg-blue-50 rounded-xl border border-blue-100' : '' }}">
-                            <span class="block text-xs font-bold uppercase tracking-tighter mb-1 {{ $day['active'] ? 'text-[#002045]' : 'text-slate-400' }}">
-                                {{ $day['label'] }}
-                            </span>
-                            <span class="text-xl font-headline font-extrabold {{ $day['active'] ? 'text-[#002045]' : 'text-slate-800' }}">
-                                {{ $day['date'] }}
-                            </span>
-                        </div>
-                    @endforeach
+            {{-- Navigasi Hari --}}
+            <div class="flex items-center gap-2">
+                <button class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors text-slate-600">
+                    <span class="material-symbols-outlined text-xl">chevron_left</span>
+                </button>
+                <div class="px-4 py-2 bg-[#002045] text-white rounded-lg text-sm font-bold min-w-[130px] text-center">
+                    Sabtu, 24 Okt 2026
                 </div>
+                <button class="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors text-slate-600">
+                    <span class="material-symbols-outlined text-xl">chevron_right</span>
+                </button>
+            </div>
 
-                {{-- Slot Waktu --}}
-                @php
-                    $slots = [
-                        ['time' => '07:00', 'status' => ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty']],
-                        ['time' => '08:00', 'status' => ['booked', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty']],
-                        ['time' => '09:00', 'status' => ['booked', 'empty', 'empty', 'booked', 'empty', 'empty', 'empty']],
-                        ['time' => '10:00', 'status' => ['empty', 'selected', 'empty', 'empty', 'empty', 'empty', 'empty']],
-                        ['time' => '11:00', 'status' => ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty']],
-                        ['time' => '12:00', 'status' => ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty']],
-                    ];
-                @endphp
+        </div>
+    </div>
 
-                <div class="relative space-y-1">
-                    @foreach ($slots as $slot)
-                        <div class="grid grid-cols-8 h-14">
-                            <div class="text-[10px] font-bold text-slate-400 text-right pr-4 pt-2 border-r border-slate-100">
-                                {{ $slot['time'] }}
+    {{-- Legenda --}}
+    <div class="flex items-center gap-6 mb-4 px-1">
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+            <span class="text-xs font-semibold text-slate-500">Kosong — bisa dipilih</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+            <span class="text-xs font-semibold text-slate-500">Pending</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            <span class="text-xs font-semibold text-slate-500">Terisi</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+            <span class="text-xs font-semibold text-slate-500">Pilihan Anda</span>
+        </div>
+    </div>
+
+    {{-- Kalender Grid Harian --}}
+    @php
+        $rooms = [
+            ['code' => 'A-101', 'name' => 'Auditorium Utama', 'building' => 'Gedung A', 'capacity' => 250],
+            ['code' => 'A-102', 'name' => 'Ruang Teater', 'building' => 'Gedung A', 'capacity' => 50],
+            ['code' => 'B-201', 'name' => 'Lab Komputer 01', 'building' => 'Gedung B', 'capacity' => 40],
+            ['code' => 'B-202', 'name' => 'Lab Komputer 02', 'building' => 'Gedung B', 'capacity' => 40],
+            ['code' => 'B-301', 'name' => 'R. Seminar B', 'building' => 'Gedung B', 'capacity' => 80],
+            ['code' => 'C-101', 'name' => 'R. Rapat Senat', 'building' => 'Gedung C', 'capacity' => 30],
+        ];
+
+        $bookings = [
+            'A-101' => [
+                [8, 11, 'approved', 'Diana Lestari', 'Wisuda Gelombang II'],
+                [13, 15, 'pending', 'BEM FT', 'Seminar Nasional'],
+            ],
+            'A-102' => [
+                [9, 11, 'approved', 'Aditya Nugraha', 'Praktikum Algoritma'],
+                [14, 16, 'pending', 'Siti Rahayu', 'Workshop Desain'],
+            ],
+            'B-201' => [
+                [7, 9, 'approved', 'Rina Marlina', 'Praktikum Jaringan'],
+                [10, 12, 'approved', 'Budi Santoso', 'Kelas Reguler'],
+            ],
+            'B-202' => [
+                [13, 15, 'approved', 'Ahmad Fauzi', 'Pemrograman Web'],
+            ],
+            'B-301' => [],
+            'C-101' => [
+                [9, 10, 'pending', 'Bambang P.', 'Rapat Koordinasi'],
+            ],
+        ];
+
+        $hours = range(7, 20);
+
+        $statusConfig = [
+            'available' => ['bg' => 'bg-slate-100', 'hover' => 'hover:bg-blue-100', 'text' => '', 'border' => 'border-slate-200'],
+            'pending'   => ['bg' => 'bg-amber-50',  'hover' => '',  'text' => 'text-amber-800', 'border' => 'border-amber-200'],
+            'approved'  => ['bg' => 'bg-emerald-50','hover' => '',  'text' => 'text-emerald-800','border' => 'border-emerald-200'],
+            'selected'  => ['bg' => 'bg-blue-600',  'hover' => '',  'text' => 'text-white', 'border' => 'border-blue-700'],
+        ];
+
+        $statusDot = [
+            'available' => 'bg-slate-300',
+            'pending'   => 'bg-amber-400',
+            'approved'  => 'bg-emerald-500',
+            'selected'  => 'bg-blue-300',
+        ];
+
+        $statusLabel = [
+            'available' => 'Kosong',
+            'pending'   => 'Pending',
+            'approved'  => 'Terisi',
+            'selected'  => 'Dipilih',
+        ];
+
+        // Slot yang dipilih user (contoh statis)
+        $selectedSlot = ['room' => 'B-202', 'hour' => 10];
+    @endphp
+
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+        <div class="overflow-x-auto">
+            <div style="min-width: {{ 80 + (count($rooms) * 160) }}px">
+
+                {{-- Header Ruangan --}}
+                <div class="flex border-b border-slate-200 bg-slate-50 sticky top-0 z-10">
+                    <div class="w-20 shrink-0 px-3 py-4 border-r border-slate-200">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Jam</span>
+                    </div>
+                    @foreach ($rooms as $room)
+                        <div class="flex-1 min-w-[160px] px-3 py-3 border-r border-slate-200 last:border-r-0">
+                            <p class="text-xs font-extrabold text-[#002045] truncate">{{ $room['name'] }}</p>
+                            <p class="text-[10px] text-slate-400 font-medium mt-0.5">{{ $room['building'] }} • {{ $room['code'] }}</p>
+                            <div class="flex items-center gap-1 mt-1">
+                                <span class="material-symbols-outlined text-[12px] text-slate-400">group</span>
+                                <span class="text-[10px] text-slate-400 font-medium">{{ $room['capacity'] }} orang</span>
                             </div>
-                            @foreach ($slot['status'] as $index => $status)
-                                @if ($status === 'booked')
-                                    <div class="border-r border-slate-100 relative p-1 cursor-not-allowed bg-red-50">
-                                        <div class="absolute inset-1 bg-red-100 border border-red-200 text-[10px] font-bold text-red-600 rounded flex items-center justify-center">
-                                            Terisi
-                                        </div>
-                                    </div>
-                                @elseif ($status === 'selected')
-                                    <div class="border-r border-slate-100 relative p-1 cursor-pointer bg-blue-50">
-                                        <div class="absolute inset-1 bg-[#002045] text-white text-[10px] font-bold rounded flex items-center justify-center shadow-md">
-                                            <span class="material-symbols-outlined text-sm mr-1">check_circle</span> Dipilih
-                                        </div>
-                                    </div>
-                                @else
-                                    <div class="border-r border-slate-100 bg-slate-50 cursor-pointer hover:bg-blue-100 transition-colors {{ $index === 6 ? 'border-r-0' : '' }}">
-                                    </div>
-                                @endif
-                            @endforeach
                         </div>
                     @endforeach
                 </div>
 
-                {{-- Legenda --}}
-                <div class="mt-8 pt-6 border-t border-slate-200 flex gap-8 justify-center">
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 bg-slate-100 border border-slate-200 rounded"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Kosong</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Terisi</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-4 h-4 bg-[#002045] rounded shadow-sm"></div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pilihan Anda</span>
-                    </div>
+                {{-- Baris Per Jam --}}
+                <div class="max-h-[560px] overflow-y-auto">
+                    @foreach ($hours as $hour)
+                        <div class="flex border-b border-slate-100 last:border-b-0">
+
+                            {{-- Label Jam --}}
+                            <div class="w-20 shrink-0 px-3 border-r border-slate-200 flex items-center justify-end">
+                                <span class="text-[11px] font-bold text-slate-400">
+                                    {{ str_pad($hour, 2, '0', STR_PAD_LEFT) }}:00
+                                </span>
+                            </div>
+
+                            {{-- Slot per Ruangan --}}
+                            @foreach ($rooms as $room)
+                                @php
+                                    $isSelected = ($selectedSlot['room'] === $room['code'] && $selectedSlot['hour'] === $hour);
+                                    $slotStatus = 'available';
+                                    $slotData = null;
+
+                                    foreach ($bookings[$room['code']] ?? [] as $booking) {
+                                        if ($hour >= $booking[0] && $hour < $booking[1]) {
+                                            $slotStatus = $booking[2];
+                                            $slotData = $booking;
+                                            break;
+                                        }
+                                    }
+
+                                    if ($isSelected) $slotStatus = 'selected';
+                                    $cfg = $statusConfig[$slotStatus];
+                                    $canClick = ($slotStatus === 'available' || $slotStatus === 'selected');
+                                @endphp
+
+                                <div class="flex-1 min-w-[160px] h-14 border-r border-slate-100 last:border-r-0 p-1">
+
+                                    @if ($slotStatus === 'available')
+                                        <button class="w-full h-full rounded-lg {{ $cfg['bg'] }} {{ $cfg['hover'] }} border border-dashed {{ $cfg['border'] }} transition-all flex items-center justify-center group cursor-pointer">
+                                            <span class="material-symbols-outlined text-slate-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+                                        </button>
+
+                                    @elseif ($slotStatus === 'selected')
+                                        <div class="w-full h-full rounded-lg {{ $cfg['bg'] }} border {{ $cfg['border'] }} px-2 py-1 cursor-pointer flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-white text-sm">check_circle</span>
+                                            <div>
+                                                <p class="text-[9px] font-bold text-white uppercase tracking-wider">Dipilih</p>
+                                                <p class="text-[10px] text-blue-200">{{ str_pad($hour, 2, '0', STR_PAD_LEFT) }}:00 - {{ str_pad($hour + 1, 2, '0', STR_PAD_LEFT) }}:00</p>
+                                            </div>
+                                        </div>
+
+                                    @else
+                                        <div class="w-full h-full rounded-lg {{ $cfg['bg'] }} border {{ $cfg['border'] }} px-2 py-1 relative overflow-hidden cursor-not-allowed">
+                                            <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg {{ $statusDot[$slotStatus] }}"></div>
+                                            <div class="pl-2">
+                                                <div class="flex items-center gap-1 mb-0.5">
+                                                    <span class="w-1.5 h-1.5 rounded-full {{ $statusDot[$slotStatus] }} shrink-0"></span>
+                                                    <span class="text-[9px] font-bold uppercase tracking-wider {{ $cfg['text'] }}">
+                                                        {{ $statusLabel[$slotStatus] }}
+                                                    </span>
+                                                </div>
+                                                @if ($slotData)
+                                                    <p class="text-[10px] font-bold text-slate-600 truncate leading-tight">{{ $slotData[3] }}</p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                </div>
+                            @endforeach
+
+                        </div>
+                    @endforeach
                 </div>
+
             </div>
         </div>
 
-        {{-- Panel Kanan --}}
-        <aside class="w-[380px] border-l border-slate-200 bg-white p-8 flex flex-col overflow-y-auto shrink-0">
-            <div class="flex-1">
+        {{-- Footer --}}
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+            <p class="text-xs text-slate-500 font-medium">
+                Menampilkan <span class="font-bold text-slate-700">{{ count($rooms) }}</span> ruangan •
+                Sabtu, 24 Oktober 2026
+            </p>
+            <p class="text-xs text-slate-400 italic">Klik slot abu-abu untuk memilih waktu peminjaman</p>
+        </div>
 
-                {{-- Foto Ruangan --}}
-                <img class="w-full h-44 object-cover rounded-xl shadow-sm mb-5 border border-slate-100"
-                     src="https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=800&q=80"
-                     alt="Ruang Teater">
+    </div>
 
-                {{-- Nama Ruangan --}}
-                <div class="flex justify-between items-start mb-2">
-                    <h2 class="text-xl font-extrabold font-headline text-[#002045] leading-tight">Ruang Teater - Gedung A</h2>
-                    <span class="bg-blue-50 border border-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase">A-102</span>
-                </div>
-                <div class="flex items-center gap-2 text-slate-500 text-sm mb-6">
-                    <span class="material-symbols-outlined text-sm">location_on</span>
-                    <span>Gedung Utama (Rektorat), Lantai 1</span>
-                </div>
-
-                {{-- Kapasitas --}}
-                <div class="mb-6">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Kapasitas</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-slate-50 border border-slate-100 rounded-lg p-4 flex flex-col items-center text-center">
-                            <span class="material-symbols-outlined text-[#002045] mb-1">group</span>
-                            <span class="text-lg font-extrabold text-slate-800">50</span>
-                            <span class="text-[10px] text-slate-500 font-bold uppercase">Kursi</span>
+    {{-- Info Slot Terpilih + Tombol Lanjut --}}
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widests mb-2">Slot Terpilih</p>
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                            <span class="material-symbols-outlined text-blue-600 text-sm">meeting_room</span>
                         </div>
-                        <div class="bg-slate-50 border border-slate-100 rounded-lg p-4 flex flex-col items-center text-center">
-                            <span class="material-symbols-outlined text-[#002045] mb-1">square_foot</span>
-                            <span class="text-lg font-extrabold text-slate-800">120</span>
-                            <span class="text-[10px] text-slate-500 font-bold uppercase">m²</span>
+                        <div>
+                            <p class="text-sm font-bold text-[#002045]">Lab Komputer 02</p>
+                            <p class="text-xs text-slate-500">Gedung B • Kapasitas 40 orang</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                            <span class="material-symbols-outlined text-blue-600 text-sm">schedule</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-[#002045]">10:00 - 11:00 WIB</p>
+                            <p class="text-xs text-slate-500">Sabtu, 24 Oktober 2026</p>
                         </div>
                     </div>
                 </div>
-
-                {{-- Waktu Terpilih --}}
-                <div class="bg-blue-50/50 p-5 rounded-xl border border-blue-100 relative mb-6">
-                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-l-xl"></div>
-                    <h3 class="text-[10px] font-black text-blue-800 uppercase tracking-widest mb-3">Waktu Terpilih</h3>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-slate-600">Selasa, 24 Okt 2026</span>
-                        <span class="text-sm font-bold text-[#002045] bg-white px-2 py-1 rounded border border-blue-100">10:00 - 11:00</span>
-                    </div>
-                </div>
-
             </div>
-
-            {{-- Tombol Lanjut --}}
-            <div class="pt-4 border-t border-slate-100">
-                <a class="w-full bg-primary-gradient text-white py-4 rounded-xl font-bold text-sm shadow-lg hover:opacity-95 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                   href="/user/ajukan-detail">
-                    Lanjut Isi Formulir
-                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
-                </a>
-                <p class="text-center text-[10px] text-slate-400 mt-3 uppercase font-bold tracking-widest">Langkah 1 dari 2</p>
-            </div>
-        </aside>
-
+            <a href="/user/ajukan-detail"
+               class="bg-primary-gradient text-white px-8 py-3.5 rounded-xl font-bold text-sm shadow-lg hover:opacity-95 active:scale-[0.98] transition-all flex items-center gap-2 shrink-0">
+                Lanjut Isi Formulir
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+            </a>
+        </div>
     </div>
 
 @endsection
