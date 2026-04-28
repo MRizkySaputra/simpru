@@ -58,7 +58,7 @@
 
             {{-- Logout --}}
             <div class="p-6 mt-auto border-t border-slate-100">
-                <a href="/login"
+                <a href="/"
                    class="flex items-center gap-3 text-slate-500 hover:text-red-600 transition-colors duration-200 font-medium text-sm px-2">
                     <span class="material-symbols-outlined">logout</span>
                     Logout
