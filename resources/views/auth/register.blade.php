@@ -114,11 +114,11 @@
             Kembali
         </button>
 
-        <a href="/register-success"
+        <button type="submit"
             class="w-1/2 bg-primary-gradient text-white font-headline font-bold py-3 rounded-lg flex items-center justify-center gap-2">
             Buat Akun
             <span class="material-symbols-outlined text-lg">arrow_forward</span>
-        </a>
+        </button>
 
     </div>
 

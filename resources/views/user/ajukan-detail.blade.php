@@ -77,7 +77,11 @@
             <p class="text-slate-500 text-sm mt-1">Lengkapi informasi di bawah ini untuk mengajukan permohonan.</p>
         </div>
 
-        <form action="#" method="POST" class="p-8">
+        <form action="/user/ajukan-proses" method="POST" enctype="multipart/form-data" class="p-8">
+            @csrf
+            
+            {{-- Input tersembunyi untuk dikirim ke Controller --}}
+            <input type="hidden" name="room_id" value="{{ $room->id ?? '' }}">
             @csrf
 
             {{-- Info Ruangan Terpilih --}}
@@ -110,8 +114,7 @@
                         <label class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">Tanggal Peminjaman</label>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">calendar_today</span>
-                            <input id="inputDate" class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] focus:bg-white outline-none text-sm"
-                                   type="date" value="{{ $data['tanggal'] }}">
+                            <input id="inputDate" name="date" class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] focus:bg-white outline-none text-sm" type="date" value="{{ $data['tanggal'] }}" required>
                         </div>
                     </div>
 
@@ -120,16 +123,14 @@
                             <label class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">Waktu Mulai</label>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">schedule</span>
-                                <input id="inputTimeStart" class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm"
-                                       type="time" value="{{ $waktu_mulai }}">
+                                <input id="inputTimeStart" name="start_time" class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm" type="time" value="{{ $waktu_mulai }}" required>
                             </div>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">Waktu Selesai</label>
                             <div class="relative">
                                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">schedule</span>
-                                <input id="inputTimeEnd" class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm"
-                                       type="time" value="{{ $waktu_selesai }}">
+                                <input id="inputTimeEnd" name="end_time" class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm" type="time" value="{{ $waktu_selesai }}" required>
                             </div>
                         </div>
                     </div>
@@ -138,8 +139,7 @@
                         <label class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">Estimasi Jumlah Peserta</label>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">group_add</span>
-                            <input id="inputParticipant" class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm"
-                                   placeholder="Contoh: {{ floor($data['kapasitas'] * 0.8) }}" type="number" max="{{ $data['kapasitas'] }}" min="1">
+                            <input id="inputParticipant" name="participants" class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm" placeholder="Contoh: {{ floor($data['kapasitas'] * 0.8) }}" type="number" max="{{ $data['kapasitas'] }}" min="1" required>
                         </div>
                         <p class="text-[10px] text-slate-400 mt-2 italic">*Maksimal kapasitas ruangan ini adalah {{ $data['kapasitas'] }} orang.</p>
                     </div>
@@ -170,7 +170,7 @@
                     {{-- Pilihan Jenis Kegiatan --}}
                     <div>
                         <label class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">Jenis Kegiatan</label>
-                        <select id="inputType" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm font-medium">
+                        <select id="inputType" name="activity_type" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm font-medium" required>>
                             <option value="" disabled selected>Pilih kategori kegiatan</option>
                             <option value="Sidang">Sidang</option>
                             <option value="Organisasi Mahasiswa (Ormawa)">Ormawa</option>
@@ -180,8 +180,7 @@
                     
                     <div>
                         <label class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">Nama Kegiatan</label>
-                        <input id="inputEventName" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm"
-                               placeholder="Masukkan judul kegiatan" type="text">
+                        <input id="inputEventName" name="activity_name" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm" placeholder="Masukkan judul kegiatan" type="text" required>
                     </div>
 
                     <div>
@@ -196,9 +195,14 @@
                             Surat Permohonan <span class="text-red-500">*</span>
                         </label>
                         <div class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center bg-slate-50 hover:bg-blue-50/30 hover:border-blue-400 transition-all cursor-pointer relative">
-                            <input type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".pdf,.doc,.docx">
-                            <span class="material-symbols-outlined text-4xl text-slate-400 mb-3">upload_file</span>
-                            <p class="text-sm font-bold text-[#002045]">Klik atau seret file ke sini</p>
+                            {{-- Tambahkan id="inputFile" di sini --}}
+                            <input type="file" id="inputFile" name="document_path" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".pdf,.doc,.docx" required>
+                            
+                            {{-- Tambahkan id="uploadIcon" di sini --}}
+                            <span id="uploadIcon" class="material-symbols-outlined text-4xl text-slate-400 mb-3">upload_file</span>
+                            
+                            {{-- Tambahkan id="fileName" di sini --}}
+                            <p id="fileName" class="text-sm font-bold text-[#002045] text-center">Klik atau seret file ke sini</p>
                             <p class="text-[10px] text-slate-500 mt-1.5">PDF, DOC, DOCX (Maks. 5MB)</p>
                         </div>
                     </div>
@@ -212,10 +216,10 @@
                     <span class="material-symbols-outlined text-lg">chevron_left</span> Kembali
                 </a>
                 
-                <button type="button" onclick="goToConfirmation()"
+                <button type="submit"
                         class="px-10 py-3.5 rounded-lg bg-primary-gradient text-white font-bold text-sm shadow-lg hover:opacity-95 flex items-center gap-2">
-                    Lanjutkan ke Konfirmasi
-                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                    Ajukan Sekarang
+                    <span class="material-symbols-outlined text-lg">send</span>
                 </button>
             </div>
         </form>
@@ -262,5 +266,29 @@
 
         window.location.href = `/user/ajukan-konfirmasi?${params.toString()}`;
     }
+</script>
+<script>
+    // Script untuk memunculkan nama file yang dipilih
+    document.getElementById('inputFile').addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            // Jika file berhasil dipilih
+            let fileName = e.target.files[0].name;
+            
+            // Ubah teks jadi nama file
+            document.getElementById('fileName').textContent = fileName;
+            document.getElementById('fileName').classList.add('text-emerald-600');
+            
+            // Ubah ikon jadi centang hijau
+            document.getElementById('uploadIcon').textContent = 'check_circle';
+            document.getElementById('uploadIcon').classList.replace('text-slate-400', 'text-emerald-500');
+        } else {
+            // Jika batal memilih file, kembalikan seperti semula
+            document.getElementById('fileName').textContent = 'Klik atau seret file ke sini';
+            document.getElementById('fileName').classList.remove('text-emerald-600');
+            
+            document.getElementById('uploadIcon').textContent = 'upload_file';
+            document.getElementById('uploadIcon').classList.replace('text-emerald-500', 'text-slate-400');
+        }
+    });
 </script>
 @endpush

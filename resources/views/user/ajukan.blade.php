@@ -110,23 +110,8 @@
     </div>
 
     @php
-        $rooms = [
-            ['code' => 'A-101', 'gedung' => 'A', 'name' => 'Auditorium Utama', 'building' => 'Gedung A', 'capacity' => 250, 'img' => 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=400&q=80', 'desc' => 'Dilengkapi sound system premium, AC sentral, dan panggung utama.'],
-            ['code' => 'A-102', 'gedung' => 'A', 'name' => 'Ruang Teater', 'building' => 'Gedung A', 'capacity' => 50, 'img' => 'https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=400&q=80', 'desc' => 'Ruang teater dengan tempat duduk berundak dan proyektor 4K.'],
-            ['code' => 'B-201', 'gedung' => 'B', 'name' => 'Lab Komputer 01', 'building' => 'Gedung B', 'capacity' => 40, 'img' => 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?auto=format&fit=crop&w=400&q=80', 'desc' => 'Lab komputer dengan 40 unit PC high-spec dan koneksi LAN Gigabit.'],
-            ['code' => 'B-202', 'gedung' => 'B', 'name' => 'Lab Komputer 02', 'building' => 'Gedung B', 'capacity' => 40, 'img' => 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?auto=format&fit=crop&w=400&q=80', 'desc' => 'Lab komputer dengan 40 unit PC high-spec dan koneksi WiFi 6.'],
-            ['code' => 'B-301', 'gedung' => 'B', 'name' => 'R. Seminar B', 'building' => 'Gedung B', 'capacity' => 80, 'img' => 'https://images.unsplash.com/photo-1558008258-3256797b43f3?auto=format&fit=crop&w=400&q=80', 'desc' => 'Ruang seminar kapasitas 80 orang dengan podium dan layar ganda.'],
-            ['code' => 'C-101', 'gedung' => 'C', 'name' => 'R. Rapat Senat', 'building' => 'Gedung C', 'capacity' => 30, 'img' => 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&q=80', 'desc' => 'Ruang rapat formal dengan meja U-shape dan sistem video conference.'],
-        ];
 
-        $bookings = [
-            'A-101' => [[8, 11, 'approved', 'Diana Lestari', 'Wisuda Gelombang II'], [13, 15, 'pending', 'BEM FT', 'Seminar Nasional']],
-            'A-102' => [[9, 11, 'approved', 'Aditya Nugraha', 'Praktikum Algoritma'], [14, 16, 'pending', 'Siti Rahayu', 'Workshop Desain']],
-            'B-201' => [[7, 9, 'approved', 'Rina Marlina', 'Praktikum Jaringan'], [10, 12, 'approved', 'Budi Santoso', 'Kelas Reguler']],
-            'B-202' => [[13, 15, 'approved', 'Ahmad Fauzi', 'Pemrograman Web']],
-            'B-301' => [],
-            'C-101' => [[9, 10, 'pending', 'Bambang P.', 'Rapat Koordinasi']],
-        ];
+        $bookings = [];
 
         $hours = range(7, 20);
 

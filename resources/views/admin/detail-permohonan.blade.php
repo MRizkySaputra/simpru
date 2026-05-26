@@ -4,6 +4,12 @@
 
 @section('content')
 
+    <nav class="mb-8 flex items-center gap-2 text-sm text-slate-500">
+        <a class="hover:text-[#002045] font-medium transition-colors flex items-center gap-1" href="/admin/permohonan">
+            <span class="material-symbols-outlined text-base">arrow_back</span> Kembali ke Daftar Permohonan
+        </a>
+    </nav>
+
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
         {{-- Kiri: Info Peminjaman --}}
@@ -12,70 +18,65 @@
                 <div class="flex justify-between items-start mb-10">
                     <div>
                         <h2 class="text-2xl font-extrabold text-[#002045] font-headline tracking-tight mb-1">Informasi Peminjaman</h2>
-                        <p class="text-sm text-slate-500">Dikirim pada 20 Okt 2026 • ID #REQ-20261012-042</p>
+                        <p class="text-sm text-slate-500">Dikirim pada {{ \Carbon\Carbon::parse($booking->created_at)->translatedFormat('d M Y') }} • ID #{{ $booking->req_id }}</p>
                     </div>
-                    <span class="px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 font-bold text-xs tracking-wider uppercase">
-                        Menunggu
-                    </span>
+                    @if($booking->status === 'menunggu')
+                        <span class="px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 font-bold text-xs tracking-wider uppercase">Menunggu</span>
+                    @elseif($booking->status === 'disetujui')
+                        <span class="px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs tracking-wider uppercase">Disetujui</span>
+                    @else
+                        <span class="px-4 py-1.5 rounded-full bg-red-100 text-red-700 font-bold text-xs tracking-wider uppercase">Ditolak</span>
+                    @endif
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
+                    
+                    @if($booking->status === 'ditolak')
+                    <div class="md:col-span-2 bg-red-50 p-4 rounded-lg border border-red-100">
+                        <p class="text-[10px] uppercase tracking-widest text-red-600 font-bold mb-1">Alasan Penolakan</p>
+                        <p class="text-sm text-red-800 font-medium">{{ $booking->rejection_reason }}</p>
+                    </div>
+                    @endif
+
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Nama Peminjam</p>
                         <div class="flex items-center gap-3">
-                            <span class="font-bold text-slate-900">Aditya Saputra</span>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-100">Mahasiswa</span>
+                            <span class="font-bold text-slate-900">{{ $booking->user->name ?? 'User' }}</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-100">{{ ucfirst($booking->user->role ?? 'Mahasiswa') }}</span>
                         </div>
                     </div>
                     
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Ruangan</p>
-                        <p class="font-bold text-slate-900">Lab Komputer 03</p>
+                        <p class="font-bold text-slate-900">{{ $booking->room->name ?? 'Ruangan' }}</p>
                     </div>
                     
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Tanggal</p>
-                        <p class="font-bold text-slate-900">24 Okt 2026</p>
+                        <p class="font-bold text-slate-900">{{ \Carbon\Carbon::parse($booking->date)->translatedFormat('d M Y') }}</p>
                     </div>
                     
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Waktu</p>
-                        <p class="font-bold text-slate-900">09:00 — 12:00 WIB</p>
-                    </div>
-
-                    {{-- Jenis Kegiatan --}}
-                    <div>
-                        <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Jenis Kegiatan</p>
-                        <p class="font-bold text-slate-900">Praktikum / Kuliah</p>
+                        <p class="font-bold text-slate-900">{{ substr($booking->start_time, 0, 5) }} — {{ substr($booking->end_time, 0, 5) }} WIB</p>
                     </div>
 
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Jenis Kegiatan</p>
-                        <span class="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-lg border border-indigo-100">Fakultas</span>
+                        <span class="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-lg border border-indigo-100">{{ $booking->activity_type }}</span>
                     </div>
 
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Jumlah Peserta</p>
-                        <p class="font-bold text-slate-900">40 Orang</p>
+                        <p class="font-bold text-slate-900">{{ $booking->participants }} Orang</p>
                     </div>
 
                     <div class="md:col-span-2">
-                        <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Keperluan</p>
+                        <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Nama Kegiatan & Keperluan</p>
                         <p class="text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-lg border border-slate-100">
-                            Kegiatan praktikum mata kuliah rutin untuk program studi Informatika semester 3.
-                            Membutuhkan proyektor dan akses internet stabil.
+                            <strong>{{ $booking->activity_name }}</strong><br><br>
+                            Keterangan bawaan sistem: Pengajuan ruangan untuk kegiatan akademik atau organisasi.
                         </p>
-                    </div>
-
-                    {{-- Fasilitas Ruangan --}}
-                    <div class="md:col-span-2 border-t border-slate-100 pt-6 mt-[-1rem]">
-                        <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Fasilitas Ruangan</p>
-                        <div class="flex flex-wrap gap-2 mt-2">
-                            <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-100">High-speed PC</span>
-                            <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-100">LAN Gigabit</span>
-                            <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-100">Proyektor</span>
-                            <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-100">AC Central</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -89,24 +90,33 @@
                     <h3 class="text-lg font-bold text-[#002045] font-headline">Surat Permohonan</h3>
                 </div>
 
-                <div class="aspect-[3/4] bg-slate-50 rounded-lg overflow-hidden mb-6 border border-slate-200 flex flex-col items-center justify-center p-6 text-center">
-                    <div class="w-16 h-16 bg-white shadow-sm rounded-full flex items-center justify-center mb-4 text-[#002045]">
-                        <span class="material-symbols-outlined text-4xl">picture_as_pdf</span>
+                @if($booking->document_path)
+                    <div class="aspect-[3/4] bg-slate-50 rounded-lg overflow-hidden mb-6 border border-slate-200 flex flex-col items-center justify-center p-6 text-center">
+                        <div class="w-16 h-16 bg-white shadow-sm rounded-full flex items-center justify-center mb-4 text-red-600">
+                            <span class="material-symbols-outlined text-4xl">picture_as_pdf</span>
+                        </div>
+                        <p class="font-bold text-[#002045] mb-1 w-full truncate">{{ basename($booking->document_path) }}</p>
                     </div>
-                    <p class="font-bold text-[#002045] mb-1">Surat Peminjaman Lab.pdf</p>
-                    <p class="text-xs text-slate-500">354 KB</p>
-                </div>
 
-                <div class="space-y-3">
-                    <button class="w-full py-3 px-4 rounded-lg border-2 border-[#002045] text-[#002045] font-bold flex items-center justify-center gap-2 hover:bg-[#002045]/5 transition-colors">
-                        <span class="material-symbols-outlined text-xl">download</span> Unduh Surat
-                    </button>
-                </div>
+                    <div class="space-y-3">
+                        <a href="{{ asset('storage/' . $booking->document_path) }}" target="_blank" class="w-full py-3 px-4 rounded-lg border-2 border-[#002045] text-[#002045] font-bold flex items-center justify-center gap-2 hover:bg-[#002045]/5 transition-colors">
+                            <span class="material-symbols-outlined text-xl">download</span> Unduh Surat
+                        </a>
+                    </div>
+                @else
+                    <div class="aspect-[3/4] bg-slate-50 rounded-lg overflow-hidden mb-6 border border-slate-200 flex flex-col items-center justify-center p-6 text-center">
+                        <div class="w-16 h-16 bg-white shadow-sm rounded-full flex items-center justify-center mb-4 text-slate-400">
+                            <span class="material-symbols-outlined text-4xl">description</span>
+                        </div>
+                        <p class="font-bold text-slate-400 mb-1">Tidak ada file yang dilampirkan</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 
-    {{-- Action Bar --}}
+    {{-- Action Bar (Hanya Muncul Jika Status Menunggu) --}}
+    @if($booking->status === 'menunggu')
     <div class="fixed bottom-0 right-0 left-64 bg-white/95 backdrop-blur-md px-10 py-4 z-40 border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
         <div class="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="hidden md:block">
@@ -114,71 +124,23 @@
                 <p class="text-sm font-medium text-slate-900">Tinjauan admin diperlukan</p>
             </div>
             <div class="flex items-center gap-4 w-full md:w-auto">
+                {{-- Tombol Tolak memicu Modal --}}
                 <button type="button" onclick="openRejectModal()" class="flex-1 md:flex-none px-8 py-3 rounded-lg border border-red-500 text-red-600 font-extrabold hover:bg-red-50 transition-colors">
                   Tolak
                  </button>
-                <button class="flex-1 md:flex-none px-10 py-3 rounded-lg bg-emerald-600 text-white font-extrabold shadow-md hover:bg-emerald-700 transition-all">
-                    Setujui Permohonan
-                </button>
+                
+                {{-- Tombol Setuju langsung mengeksekusi Form --}}
+                <form action="/admin/proses-permohonan/{{ $booking->id }}" method="POST" class="m-0 p-0 flex-1 md:flex-none">
+                    @csrf
+                    <input type="hidden" name="action" value="setujui">
+                    <button type="submit" class="w-full px-10 py-3 rounded-lg bg-emerald-600 text-white font-extrabold shadow-md hover:bg-emerald-700 transition-all">
+                        Setujui Permohonan
+                    </button>
+                </form>
             </div>
         </div>
     </div>
-
-    {{-- Modal Tolak Permohonan --}}
-    <div id="rejectModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        {{-- Backdrop/Background Gelap --}}
-        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="closeRejectModal()"></div>
-
-        {{-- Panel Modal --}}
-        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-slate-200">
-                    
-                    {{-- Form Penolakan --}}
-                    <form action="#" method="POST">
-                        @csrf
-                        <div class="bg-white px-6 pb-6 pt-8 sm:p-8">
-                            <div class="sm:flex sm:items-start">
-                                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-12 sm:w-12">
-                                    <span class="material-symbols-outlined text-red-600 text-2xl">warning</span>
-                                </div>
-                                <div class="mt-4 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
-                                    <h3 class="text-xl font-bold leading-6 text-[#002045] font-headline" id="modal-title">Tolak Permohonan</h3>
-                                    <div class="mt-2">
-                                        <p class="text-sm text-slate-500 mb-4">Berikan alasan mengapa permohonan peminjaman ruangan ini ditolak. Alasan ini akan dikirimkan kepada peminjam via notifikasi.</p>
-                                        
-                                        <div>
-                                            <label for="alasan_penolakan" class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">
-                                                Alasan Penolakan <span class="text-red-500">*</span>
-                                            </label>
-                                            <textarea id="alasan_penolakan" 
-                                                      name="alasan_penolakan" 
-                                                      rows="4" 
-                                                      required
-                                                      class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none text-sm resize-none" 
-                                                      placeholder="Contoh: Ruangan akan digunakan untuk pemeliharaan rutin pada jam tersebut..."></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-slate-50 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 border-t border-slate-100">
-                            <button type="button" onclick="closeRejectModal()" class="w-full sm:w-auto px-6 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-700 font-bold hover:bg-slate-50 transition-colors text-sm">
-                                Batal
-                            </button>
-                            <button type="submit" class="w-full sm:w-auto px-8 py-2.5 rounded-lg bg-red-600 text-white font-bold shadow-md hover:bg-red-700 transition-colors text-sm flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-sm">send</span> Kirim Penolakan
-                            </button>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Spacer agar konten tidak tertutup action bar --}}
-    <div class="h-24"></div>
+    @endif
 
     {{-- Modal Alasan Penolakan --}}
     <div id="rejectModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-[#002045]/40 backdrop-blur-sm">
@@ -190,7 +152,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-[#002045] font-headline">Tolak Permohonan</h3>
-                        <p class="text-[11px] text-slate-500">ID: #REQ-20261012-042</p>
+                        <p class="text-[11px] text-slate-500">ID: #{{ $booking->req_id }}</p>
                     </div>
                 </div>
                 <button onclick="closeRejectModal()" class="p-2 rounded-full hover:bg-slate-100 text-slate-400 transition-colors">
@@ -198,19 +160,18 @@
                 </button>
             </div>
 
-            <form action="#" method="POST" class="space-y-6">
+            <form action="/admin/proses-permohonan/{{ $booking->id }}" method="POST" class="space-y-6">
                 @csrf
+                <input type="hidden" name="action" value="tolak">
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">
                         Alasan Penolakan <span class="text-red-500">*</span>
                     </label>
                     <textarea rows="4" 
+                              name="alasan_penolakan"
+                              required
                               class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none resize-none transition-all placeholder:text-slate-400" 
                               placeholder="Contoh: Jadwal bentrok dengan kegiatan universitas, atau dokumen kurang lengkap..."></textarea>
-                    <p class="text-[10px] text-slate-400 mt-2 flex items-start gap-1">
-                        <span class="material-symbols-outlined text-[12px]">info</span>
-                        Alasan ini akan dikirimkan ke notifikasi atau email peminjam.
-                    </p>
                 </div>
 
                 <div class="flex gap-3 justify-end pt-2">
@@ -229,21 +190,18 @@
 
 @push('scripts')
 <script>
-    // Fungsi untuk membuka modal penolakan
     function openRejectModal() {
         const modal = document.getElementById('rejectModal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
     }
 
-    // Fungsi untuk menutup modal penolakan
     function closeRejectModal() {
         const modal = document.getElementById('rejectModal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
     }
 
-    // Menutup modal jika klik di luar kotak putih
     document.getElementById('rejectModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeRejectModal();
