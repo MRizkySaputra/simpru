@@ -58,6 +58,7 @@
     </div>
 
     @php
+        // KONFIGURASI STATUS DIPERBAIKI
         $statusConfig = [
             'available' => ['bg' => 'bg-slate-100', 'hover' => 'hover:bg-slate-200', 'text' => '', 'border' => 'border-slate-200', 'dot' => 'bg-slate-300', 'label' => ''],
             'menunggu'  => ['bg' => 'bg-amber-50',  'hover' => 'hover:bg-amber-100', 'text' => 'text-amber-800', 'border' => 'border-amber-200', 'dot' => 'bg-amber-400', 'label' => 'Menunggu'],
@@ -89,7 +90,7 @@
             </div>
         </div>
 
-        {{-- VIEW HARIAN (Dibuat otomatis oleh JS agar tanggal bisa berubah tanpa reload) --}}
+        {{-- VIEW HARIAN --}}
         <div id="view-harian" class="hidden transition-all duration-300">
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
                 <div class="overflow-x-auto" id="calendarScroll">
@@ -107,6 +108,82 @@
         </p>
     </div>
 
+    {{-- Pop up Detail & Aksi Pengajuan (ADMIN VERSION) --}}
+    <div id="slotPopup" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#002045]/40 backdrop-blur-sm" onclick="closePopup(event)">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden" onclick="event.stopPropagation()">
+
+            {{-- Gambar Ruangan --}}
+            <div class="relative h-48">
+                <img id="popupImg" src="" alt="Ruangan" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#002045]/80 via-transparent to-transparent"></div>
+                <button onclick="closePopupBtn()" class="absolute top-3 right-3 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-colors backdrop-blur-sm">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+                <div id="popupStatusBadge" class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"></div>
+                <div class="absolute bottom-4 left-4">
+                    <h3 id="popupRoomName" class="text-lg font-bold text-white font-headline"></h3>
+                    <p id="popupBuilding" class="text-xs text-white/80 mt-0.5"></p>
+                </div>
+            </div>
+
+            {{-- Info --}}
+            <div class="p-6">
+                <div class="grid grid-cols-2 gap-4 mb-5">
+                    <div class="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Kapasitas</p>
+                        <div class="flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-slate-500 text-sm">group</span>
+                            <p id="popupCapacity" class="text-sm font-bold text-slate-800"></p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widests mb-1">Waktu</p>
+                        <div class="flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-slate-500 text-sm">schedule</span>
+                            <p id="popupTime" class="text-sm font-bold text-slate-800"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <p id="popupDesc" class="text-xs text-slate-500 leading-relaxed mb-5"></p>
+
+                {{-- Aksi Tersedia (Hanya Info Kosong untuk Admin) --}}
+                <div id="popupActionAvailable" class="hidden">
+                    <p class="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-lg px-3 py-3 mb-4 text-center">
+                        Ruangan ini kosong dan tersedia untuk dipinjam.
+                    </p>
+                    <button onclick="closePopupBtn()" class="w-full py-2.5 border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50">
+                        Tutup
+                    </button>
+                </div>
+
+                {{-- Aksi Terisi (Alert & Detail Pemesan) --}}
+                <div id="popupActionBooked" class="hidden">
+                    {{-- Alert Box (Dinamis dari JS) --}}
+                    <div id="popupBookedAlert" class="mb-4 p-3 rounded-lg flex items-start gap-2 border">
+                        <span id="popupAlertIcon" class="material-symbols-outlined text-sm mt-0.5"></span>
+                        <p id="popupAlertText" class="text-xs font-medium"></p>
+                    </div>
+
+                    <div id="popupBookedInfo" class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widests mb-1">Dipesan oleh</p>
+                        <p id="popupBooker" class="text-sm font-bold text-[#002045]"></p>
+                        <p id="popupPurpose" class="text-xs text-slate-500 mt-0.5"></p>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button onclick="closePopupBtn()" class="flex-1 py-2.5 border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50">
+                            Tutup
+                        </button>
+                        <a href="/admin/permohonan" class="flex-1 py-2.5 bg-[#002045] text-white rounded-lg text-sm font-bold text-center hover:opacity-95 flex items-center justify-center gap-2">
+                            Lihat Berkas <span class="material-symbols-outlined text-sm">visibility</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
@@ -118,9 +195,15 @@
     const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
     const roomsData = @json($rooms);
-    const allEvents = @json($bookingsList);
+    const allEventsConfig = @json($bookingsList);
     const statusConfig = @json($statusConfig);
     const hours = [7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+
+    // Memformat status menjadi lowercase agar matching dengan config
+    const allEvents = allEventsConfig.map(e => ({
+        ...e,
+        status: e.status.trim().toLowerCase()
+    }));
 
     function formatDateLabel(d) { return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`; }
     function padDate(n) { return n.toString().padStart(2,'0'); }
@@ -233,7 +316,8 @@
                 
                 html += `<div class="room-col flex-1 min-w-[160px] border-r border-slate-100 last:border-r-0 p-1 group relative bg-white" data-code="${room.code}" data-gedung="${room.gedung}">`;
                 if(slotEvent) {
-                    html += `<div class="w-full h-14 rounded-lg ${cfg.bg} border ${cfg.border} px-2 py-1 relative overflow-hidden group/item">
+                    html += `<div class="w-full h-14 rounded-lg ${cfg.bg} border ${cfg.border} px-2 py-1 relative overflow-hidden group/item cursor-pointer"
+                                  onclick="showBookingInfo('${room.code}', ${h}, '${room.name}', '${room.building}', ${room.capacity}, '${room.img}', '${room.desc}', '${slotEvent.status}', '${slotEvent.booker}', '${slotEvent.title}')">
                                 <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${cfg.dot}"></div>
                                 <div class="pl-2">
                                     <div class="flex items-center gap-1 mb-0.5">
@@ -243,11 +327,10 @@
                                     <p class="text-[10px] font-bold text-slate-700 truncate leading-tight">${slotEvent.title}</p>
                                     <p class="text-[9px] text-slate-500 truncate">${slotEvent.booker}</p>
                                 </div>
-                                <div class="absolute inset-0 bg-white/95 rounded-lg border ${cfg.border} opacity-0 group-hover/item:opacity-100 transition-all flex items-center justify-center gap-1.5 z-10">
-                                    <a href="/admin/permohonan" class="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded transition-all" title="Proses Permohonan">
-                                        <span class="material-symbols-outlined text-sm">visibility</span>
-                                    </a>
-                                </div>
+                            </div>`;
+                } else {
+                    html += `<div class="w-full h-14 rounded-lg flex items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors"
+                                  onclick="selectSlot(this, '${room.code}', ${h}, '${room.name}', '${room.building}', ${room.capacity}, '${room.img}', '${room.desc}')">
                             </div>`;
                 }
                 html += `</div>`;
@@ -296,7 +379,7 @@
                     dayEvents.forEach(e => {
                         let cfg = statusConfig[e.status] || statusConfig['menunggu'];
                         html += `
-                            <div class="weekly-event-item w-full min-h-[46px] h-full rounded-lg ${cfg.bg} border ${cfg.border} px-1.5 md:px-2 py-1 relative overflow-hidden group/item cursor-pointer hover:opacity-80" data-code="${e.roomCode}" data-gedung="${e.gedung}">
+                            <div class="weekly-event-item w-full min-h-[46px] h-full rounded-lg ${cfg.bg} border ${cfg.border} px-1.5 md:px-2 py-1 relative overflow-hidden group/item cursor-pointer hover:opacity-80" data-code="${e.roomCode}" data-gedung="${e.gedung}" onclick="showBookingInfo('${e.roomCode}', ${h}, '${e.roomName}', '${e.gedung}', ${e.capacity}, '${e.img}', '${e.desc}', '${e.status}', '${e.booker}', '${e.title}'); event.stopPropagation();">
                                 <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg ${cfg.dot}"></div>
                                 <div class="pl-1.5 md:pl-2">
                                     <p class="text-[8px] md:text-[10px] font-bold text-slate-700 truncate leading-tight">${e.title}</p>
@@ -338,10 +421,7 @@
                 html += `<span class="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${isToday ? 'bg-[#002045] text-white shadow-md' : 'text-slate-500'} mb-2">${actualDate}</span>`;
                 let dayEvents = allEvents.filter(e => e.dateStr === dateStr);
                 
-                // Sort dayEvents so early hours come first
                 dayEvents.sort((a,b) => a.startHour - b.startHour);
-
-                // Group by room & title if spans multiple hours to avoid duplicate blocks
                 let uniqueEvents = [];
                 let seenKeys = new Set();
                 dayEvents.forEach(e => {
@@ -352,7 +432,7 @@
                 uniqueEvents.forEach(e => {
                     let cfg = statusConfig[e.status] || statusConfig['menunggu'];
                     html += `<div class="monthly-event-item px-2 py-1 ${cfg.bg} ${cfg.text} text-[9px] font-bold rounded mb-1 truncate cursor-pointer hover:opacity-80 transition-opacity" 
-                                 title="${e.title}" data-code="${e.roomCode}" data-gedung="${e.gedung}">
+                                 title="${e.title}" data-code="${e.roomCode}" data-gedung="${e.gedung}" onclick="showBookingInfo('${e.roomCode}', ${e.startHour}, '${e.roomName}', '${e.gedung}', ${e.capacity}, '${e.img}', '${e.desc}', '${e.status}', '${e.booker}', '${e.title}'); event.stopPropagation();">
                                 ${padDate(e.startHour)}:00 - ${e.title}
                              </div>`;
                 });
@@ -365,7 +445,6 @@
         const gedungFilter = document.getElementById('filterGedung').value;
         const ruanganFilter = document.getElementById('filterRuangan').value;
 
-        // Filter Kolom di Harian
         document.querySelectorAll('#view-harian .room-col').forEach(col => {
             const code = col.dataset.code; const gedung = col.dataset.gedung;
             let show = true;
@@ -374,7 +453,6 @@
             col.style.display = show ? '' : 'none';
         });
 
-        // Filter Block di Mingguan & Bulanan
         document.querySelectorAll('.weekly-event-item, .monthly-event-item').forEach(el => {
             const code = el.dataset.code; const gedung = el.dataset.gedung;
             let show = true;
@@ -395,6 +473,77 @@
         });
         applyFilter();
     });
+
+    // --- POPUP LOGIC ---
+    let selectedSlotEl = null;
+
+    function openPopup() {
+        document.getElementById('slotPopup').classList.remove('hidden');
+        document.getElementById('slotPopup').classList.add('flex');
+    }
+
+    function closePopupBtn() {
+        document.getElementById('slotPopup').classList.add('hidden');
+        document.getElementById('slotPopup').classList.remove('flex');
+    }
+
+    function closePopup(e) {
+        if (e.target === document.getElementById('slotPopup')) closePopupBtn();
+    }
+
+    function fillPopupBase(roomCode, hour, roomName, building, capacity, img, desc) {
+        document.getElementById('popupImg').src = img || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=400&q=80';
+        document.getElementById('popupRoomName').textContent = roomName;
+        document.getElementById('popupBuilding').textContent = building;
+        document.getElementById('popupCapacity').textContent = capacity + ' orang';
+        document.getElementById('popupTime').textContent = `${String(hour).padStart(2,'0')}:00 – ${String(hour+1).padStart(2,'0')}:00`;
+        document.getElementById('popupDesc').textContent = desc || 'Fasilitas standar tersedia.';
+    }
+
+    // Fungsi klik slot kosong
+    function selectSlot(el, roomCode, hour, roomName, building, capacity, img, desc) {
+        fillPopupBase(roomCode, hour, roomName, building, capacity, img, desc);
+        
+        document.getElementById('popupStatusBadge').textContent = 'Kosong';
+        document.getElementById('popupStatusBadge').className = 'absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-500 text-white';
+
+        document.getElementById('popupActionBooked').classList.add('hidden');
+        document.getElementById('popupActionAvailable').classList.remove('hidden');
+        
+        openPopup();
+    }
+
+    // Fungsi klik slot terisi
+    function showBookingInfo(roomCode, hour, roomName, building, capacity, img, desc, status, booker, purpose) {
+        fillPopupBase(roomCode, hour, roomName, building, capacity, img, desc);
+
+        const alertBox = document.getElementById('popupBookedAlert');
+        const alertIcon = document.getElementById('popupAlertIcon');
+        const alertText = document.getElementById('popupAlertText');
+
+        if (status === 'menunggu') {
+            document.getElementById('popupStatusBadge').textContent = 'Menunggu';
+            document.getElementById('popupStatusBadge').className = 'absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white';
+            
+            alertBox.className = 'mb-4 p-3 rounded-lg flex items-start gap-2 border bg-amber-50 border-amber-200 text-amber-800';
+            alertIcon.textContent = 'hourglass_empty';
+            alertText.textContent = 'Menunggu persetujuan Admin (Anda). Silakan cek halaman Permohonan.';
+        } else {
+            document.getElementById('popupStatusBadge').textContent = 'Disetujui';
+            document.getElementById('popupStatusBadge').className = 'absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-white';
+            
+            alertBox.className = 'mb-4 p-3 rounded-lg flex items-start gap-2 border bg-emerald-50 border-emerald-200 text-emerald-800';
+            alertIcon.textContent = 'verified';
+            alertText.textContent = 'Ruangan ini sudah disetujui peminjamannya.';
+        }
+
+        document.getElementById('popupBooker').textContent = booker || 'Anonim';
+        document.getElementById('popupPurpose').textContent = purpose || '-';
+
+        document.getElementById('popupActionAvailable').classList.add('hidden');
+        document.getElementById('popupActionBooked').classList.remove('hidden');
+        openPopup();
+    }
 
     // Jalankan pertama kali
     updateDateUI();

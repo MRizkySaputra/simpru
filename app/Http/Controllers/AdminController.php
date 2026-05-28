@@ -66,19 +66,21 @@ class AdminController extends Controller
 
     public function storeRuangan(Request $request)
 {
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'building_id' => 'required',
-        'capacity' => 'required|integer',
-    ]);
+    // 1. Ambil ID tertinggi dari tabel ruangan saat ini
+    $maxId = \App\Models\Room::max('id') ?? 0;
+    
+    // 2. Buat kandidat kode baru
+    $newCode = 'R-' . str_pad($maxId + 1, 3, '0', STR_PAD_LEFT);
 
-    // Membuat kode ruangan otomatis (contoh: R-001, R-002)
-    $lastRoom = Room::latest()->first();
-    $newId = $lastRoom ? (int)filter_var($lastRoom->code, FILTER_SANITIZE_NUMBER_INT) + 1 : 1;
-    $newCode = 'R-' . str_pad($newId, 3, '0', STR_PAD_LEFT);
+    // 3. (Penjaga Gawang) Pastikan kodenya benar-benar belum dipakai!
+    // Jika ternyata sudah ada, sistem akan terus menambah angkanya sampai ketemu yang kosong
+    while (\App\Models\Room::where('code', $newCode)->exists()) {
+        $maxId++;
+        $newCode = 'R-' . str_pad($maxId + 1, 3, '0', STR_PAD_LEFT);
+    }
 
-    // Simpan ke database
-    Room::create([
+    // 4. Simpan ke database
+    \App\Models\Room::create([
         'code'        => $newCode,
         'name'        => $request->name,
         'building_id' => $request->building_id,
@@ -87,6 +89,22 @@ class AdminController extends Controller
     ]);
 
     return redirect()->back()->with('success', 'Ruangan berhasil ditambahkan!');
+
+    }public function updateRuangan(Request $request, $id)
+{
+    // Cari ruangan berdasarkan ID
+    $room = \App\Models\Room::findOrFail($id);
+
+    // Update data ruangan
+    $room->update([
+        'name'        => $request->name,
+        'building_id' => $request->building_id,
+        'capacity'    => $request->capacity,
+        'facilities'  => $request->facilities,
+    ]);
+
+    // Kembalikan ke halaman ruangan dengan pesan sukses
+    return redirect()->back()->with('success', 'Data ruangan berhasil diperbarui!');
 }
 
     public function deleteRuangan($id)

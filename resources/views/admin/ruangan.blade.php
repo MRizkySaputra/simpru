@@ -24,7 +24,7 @@
                 <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Kapasitas Total</span>
             </div>
             <div class="flex items-baseline gap-2">
-                <h3 class="text-3xl font-extrabold text-slate-900 font-headline">{{ $totalRooms }}</h3>
+                <h3 class="text-3xl font-extrabold text-slate-900 font-headline">{{ $totalRooms ?? 0 }}</h3>
                 <p class="text-sm font-medium text-slate-500">Total Ruangan</p>
             </div>
         </div>
@@ -35,7 +35,7 @@
                 <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Ketersediaan</span>
             </div>
             <div class="flex items-baseline gap-2">
-                <h3 class="text-3xl font-extrabold text-green-600 font-headline">{{ $availableRooms }}</h3>
+                <h3 class="text-3xl font-extrabold text-green-600 font-headline">{{ $availableRooms ?? 0 }}</h3>
                 <p class="text-sm font-medium text-slate-500">Ruangan Tersedia</p>
             </div>
         </div>
@@ -46,7 +46,7 @@
                 <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Reservasi Aktif</span>
             </div>
             <div class="flex items-baseline gap-2">
-                <h3 class="text-3xl font-extrabold text-amber-600 font-headline">{{ $activeBookingsToday }}</h3>
+                <h3 class="text-3xl font-extrabold text-amber-600 font-headline">{{ $activeBookingsToday ?? 0 }}</h3>
                 <p class="text-sm font-medium text-slate-500">Ruangan Dipakai</p>
             </div>
         </div>
@@ -91,12 +91,22 @@
                             </div>
                         </td>
                         <td class="p-5 text-right">
-                            <form action="/admin/ruangan/{{ $room->id }}" method="POST">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors border border-slate-200" title="Hapus">
-                                    <span class="material-symbols-outlined text-sm">delete</span>
+                            <div class="flex justify-end gap-2">
+                                {{-- Tombol Edit --}}
+                                <button type="button" 
+                                        onclick="openEditModal('{{ $room->id }}', '{{ $room->name }}', '{{ $room->building_id }}', '{{ $room->capacity }}', '{{ $room->facilities }}')" 
+                                        class="p-2 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors border border-slate-200" title="Edit">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
                                 </button>
-                            </form>
+                                
+                                {{-- Tombol Hapus --}}
+                                <form action="/admin/ruangan/{{ $room->id }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus ruangan ini?');">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors border border-slate-200" title="Hapus">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty
@@ -149,11 +159,70 @@
         </div>
     </div>
 
+    {{-- Modal Edit Ruangan --}}
+    <div id="editRoomModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-[#002045]/40 backdrop-blur-sm">
+        <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] m-4">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-xl font-extrabold text-[#002045] font-headline">Edit Ruangan</h3>
+                <button onclick="closeModal('editRoomModal')" class="p-2 hover:bg-slate-100 rounded-full text-slate-500">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-8 overflow-y-auto bg-slate-50/50">
+                <form id="editRoomForm" action="" method="POST" class="space-y-5">
+                    @csrf
+                    @method('PUT')
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Nama Ruangan</label>
+                        <input id="edit_name" name="name" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" type="text" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Gedung</label>
+                            <select id="edit_building" name="building_id" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                                <option value="A">Gedung A</option>
+                                <option value="B">Gedung B</option>
+                                <option value="C">Gedung C</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Kapasitas</label>
+                            <input id="edit_capacity" name="capacity" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" type="number" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Fasilitas Utama</label>
+                        <input id="edit_facilities" name="facilities" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" type="text">
+                    </div>
+                    <div class="pt-4 flex justify-end gap-3">
+                        <button type="button" onclick="closeModal('editRoomModal')" class="bg-white border border-slate-200 text-slate-600 px-8 py-3 rounded-lg font-bold text-sm hover:bg-slate-50">Batal</button>
+                        <button type="submit" class="bg-[#002045] text-white px-8 py-3 rounded-lg font-bold text-sm shadow-md hover:opacity-95">Update Ruangan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
 <script>
     function openModal(id) { document.getElementById(id).classList.replace('hidden', 'flex'); }
     function closeModal(id) { document.getElementById(id).classList.replace('flex', 'hidden'); }
+
+    // Fungsi untuk memanggil modal edit dan mengisi form
+    function openEditModal(id, name, building, capacity, facilities) {
+        // Ubah action form ke rute update yang sesuai
+        document.getElementById('editRoomForm').action = `/admin/ruangan/${id}`;
+        
+        // Isi data ke dalam input
+        document.getElementById('edit_name').value = name;
+        document.getElementById('edit_building').value = building;
+        document.getElementById('edit_capacity').value = capacity;
+        document.getElementById('edit_facilities').value = facilities;
+        
+        // Buka modal
+        openModal('editRoomModal');
+    }
 </script>
 @endpush

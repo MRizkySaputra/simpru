@@ -77,12 +77,23 @@
             <p class="text-slate-500 text-sm mt-1">Lengkapi informasi di bawah ini untuk mengajukan permohonan.</p>
         </div>
 
-        <form action="/user/ajukan-proses" method="POST" enctype="multipart/form-data" class="p-8">
+        {{-- Menampilkan Error Jika Jadwal Bentrok --}}
+        @if ($errors->any())
+            <div class="mx-8 mt-8 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+                <ul class="list-disc pl-5 text-sm font-bold">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{-- Action diubah ke ajukan-konfirmasi --}}
+        <form action="/user/ajukan-konfirmasi" method="POST" enctype="multipart/form-data" class="p-8">
             @csrf
             
             {{-- Input tersembunyi untuk dikirim ke Controller --}}
             <input type="hidden" name="room_id" value="{{ $room->id ?? '' }}">
-            @csrf
 
             {{-- Info Ruangan Terpilih --}}
             <div class="bg-slate-50 p-6 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between border border-slate-200 mb-8">
@@ -170,7 +181,7 @@
                     {{-- Pilihan Jenis Kegiatan --}}
                     <div>
                         <label class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">Jenis Kegiatan</label>
-                        <select id="inputType" name="activity_type" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm font-medium" required>>
+                        <select id="inputType" name="activity_type" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm font-medium" required>
                             <option value="" disabled selected>Pilih kategori kegiatan</option>
                             <option value="Sidang">Sidang</option>
                             <option value="Organisasi Mahasiswa (Ormawa)">Ormawa</option>
@@ -185,9 +196,9 @@
 
                     <div>
                         <label class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">Keperluan</label>
-                        <textarea id="inputPurpose" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm resize-none"
+                        <textarea id="inputPurpose" name="purpose" class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#002045]/20 outline-none text-sm resize-none"
                                   placeholder="Jelaskan secara detail maksud penggunaan ruangan ini..."
-                                  rows="4"></textarea>
+                                  rows="4" required></textarea>
                     </div>
 
                     <div>
@@ -195,15 +206,13 @@
                             Surat Permohonan <span class="text-red-500">*</span>
                         </label>
                         <div class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center bg-slate-50 hover:bg-blue-50/30 hover:border-blue-400 transition-all cursor-pointer relative">
-                            {{-- Tambahkan id="inputFile" di sini --}}
-                            <input type="file" id="inputFile" name="document_path" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".pdf,.doc,.docx" required>
+                            {{-- Input file dengan validasi accept .pdf --}}
+                            <input type="file" id="inputFile" name="document_path" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".pdf" required>
                             
-                            {{-- Tambahkan id="uploadIcon" di sini --}}
                             <span id="uploadIcon" class="material-symbols-outlined text-4xl text-slate-400 mb-3">upload_file</span>
                             
-                            {{-- Tambahkan id="fileName" di sini --}}
                             <p id="fileName" class="text-sm font-bold text-[#002045] text-center">Klik atau seret file ke sini</p>
-                            <p class="text-[10px] text-slate-500 mt-1.5">PDF, DOC, DOCX (Maks. 5MB)</p>
+                            <p class="text-[10px] text-slate-500 mt-1.5">Hanya file PDF (Maks. 5MB)</p>
                         </div>
                     </div>
                 </div>
@@ -238,41 +247,26 @@
 
 @push('scripts')
 <script>
-    // Fungsi untuk mengirim seluruh data ke halaman konfirmasi
-    function goToConfirmation() {
-        const params = new URLSearchParams(window.location.search);
-        
-        const date = document.getElementById('inputDate').value;
-        const timeStart = document.getElementById('inputTimeStart').value;
-        const timeEnd = document.getElementById('inputTimeEnd').value;
-        const participant = document.getElementById('inputParticipant').value;
-        
-        const typeSelect = document.getElementById('inputType');
-        const eventType = typeSelect.options[typeSelect.selectedIndex].text; 
-        
-        const eventName = document.getElementById('inputEventName').value;
-        const purpose = document.getElementById('inputPurpose').value;
-
-        params.set('date', date);
-        params.set('timeStart', timeStart);
-        params.set('timeEnd', timeEnd);
-        params.set('participant', participant);
-        
-        if(eventType !== 'Pilih kategori kegiatan') {
-            params.set('eventType', eventType);
-        }
-        params.set('eventName', eventName);
-        params.set('purpose', purpose);
-
-        window.location.href = `/user/ajukan-konfirmasi?${params.toString()}`;
-    }
-</script>
-<script>
-    // Script untuk memunculkan nama file yang dipilih
+    // Script untuk memunculkan nama file yang dipilih dan memvalidasi PDF
     document.getElementById('inputFile').addEventListener('change', function(e) {
         if (e.target.files.length > 0) {
-            // Jika file berhasil dipilih
-            let fileName = e.target.files[0].name;
+            let file = e.target.files[0];
+            
+            // Validasi file harus PDF
+            if (file.type !== 'application/pdf') {
+                alert('Maaf, dokumen harus dalam format PDF!');
+                this.value = ''; // Reset input agar file yang salah dibuang
+                
+                // Kembalikan tampilan ke default
+                document.getElementById('fileName').textContent = 'Klik atau seret file ke sini';
+                document.getElementById('fileName').classList.remove('text-emerald-600');
+                document.getElementById('uploadIcon').textContent = 'upload_file';
+                document.getElementById('uploadIcon').classList.replace('text-emerald-500', 'text-slate-400');
+                return;
+            }
+            
+            // Jika file berhasil dipilih dan formatnya PDF
+            let fileName = file.name;
             
             // Ubah teks jadi nama file
             document.getElementById('fileName').textContent = fileName;

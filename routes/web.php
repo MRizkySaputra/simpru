@@ -14,7 +14,7 @@ Route::post('/login-process', [AuthController::class, 'loginProcess']);
 Route::get('/register', [AuthController::class, 'register']);
 Route::post('/register-process', [AuthController::class, 'registerProcess']);
 
-
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/register', function () {
     return view('auth.register');
@@ -42,6 +42,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/ruangan', [AdminController::class, 'ruangan']);
     Route::post('/ruangan/store', [AdminController::class, 'storeRuangan']);
     Route::delete('/ruangan/{id}', [AdminController::class, 'deleteRuangan']);
+    Route::put('/ruangan/{id}', [AdminController::class, 'updateRuangan']);
     Route::get('/permohonan', [AdminController::class, 'permohonan']);
     Route::post('/detail-permohonan', [AdminController::class, 'prosesPermohonan']); // Untuk tombol Setujui/Tolak
     Route::get('/jadwal', [AdminController::class, 'jadwal']);
@@ -72,6 +73,8 @@ Route::prefix('user')->group(function () {
     // Rute Booking / Ajukan
     Route::get('/ajukan', [BookingController::class, 'ajukan']);
     Route::get('/ajukan-detail', [BookingController::class, 'ajukanDetail']); // Mengarah ke Controller
+    Route::post('/ajukan-proses', [BookingController::class, 'ajukanProses']);
+    Route::post('/ajukan-konfirmasi', [BookingController::class, 'ajukanKonfirmasi']);
     Route::post('/ajukan-proses', [BookingController::class, 'ajukanProses']);
     
     // Rute statis tambahan
