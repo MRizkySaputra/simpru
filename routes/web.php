@@ -51,6 +51,12 @@ Route::prefix('admin')->group(function () {
     Route::get('/permohonan', [AdminController::class, 'permohonan']);
     Route::get('/detail-permohonan/{id}', [AdminController::class, 'detailPermohonan']);
     Route::post('/proses-permohonan/{id}', [AdminController::class, 'prosesPermohonan']);
+    Route::post('/users/store', [AdminController::class, 'storeUser']);
+    Route::put('/users/{id}', [AdminController::class, 'updateUser']);
+    Route::put('/users/{id}/role', [AdminController::class, 'changeRole']);
+    Route::put('/users/{id}/toggle-status', [AdminController::class, 'toggleStatus']);
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+    Route::get('/settings', [AdminController::class, 'settings']);
     
     // Rute statis
     Route::get('/notifikasi', function () { return view('admin.notifikasi'); });

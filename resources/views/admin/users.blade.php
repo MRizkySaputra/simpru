@@ -33,7 +33,7 @@
                 </div>
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
             </div>
-            <p class="text-4xl font-black text-[#002045] font-headline">124</p>
+            <p class="text-4xl font-black text-[#002045] font-headline">{{ $totalUsersCount }}</p>
             <p class="text-xs text-slate-500 font-medium mt-2">Total Pengguna Terdaftar</p>
         </div>
         <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
@@ -43,7 +43,7 @@
                 </div>
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mahasiswa</span>
             </div>
-            <p class="text-4xl font-black text-emerald-600 font-headline">98</p>
+            <p class="text-4xl font-black text-emerald-600 font-headline">{{ $mahasiswaCount }}</p>
             <p class="text-xs text-slate-500 font-medium mt-2">Akun Mahasiswa Aktif</p>
         </div>
         <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
@@ -53,7 +53,7 @@
                 </div>
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dosen</span>
             </div>
-            <p class="text-4xl font-black text-purple-600 font-headline">18</p>
+            <p class="text-4xl font-black text-purple-600 font-headline">{{ $dosenCount }}</p>
             <p class="text-xs text-slate-500 font-medium mt-2">Akun Dosen & Staf</p>
         </div>
         <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
@@ -63,32 +63,32 @@
                 </div>
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nonaktif</span>
             </div>
-            <p class="text-4xl font-black text-red-500 font-headline">08</p>
+            <p class="text-4xl font-black text-red-500 font-headline">{{ $inactiveCount }}</p>
             <p class="text-xs text-slate-500 font-medium mt-2">Akun Dinonaktifkan</p>
         </div>
     </div>
 
     {{-- Filter & Pencarian --}}
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6 flex flex-wrap items-center gap-4">
+    <form action="/admin/users" method="GET" class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6 flex flex-wrap items-center gap-4">
         <div class="relative flex-1 min-w-[200px]">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-            <input type="text" placeholder="Cari nama, email, atau NIM..."
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, email, atau NIM..."
                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
         </div>
-        <select class="bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none min-w-[140px]">
+        <select name="role" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none min-w-[140px]">
             <option value="">Semua Role</option>
-            <option value="mahasiswa">Mahasiswa</option>
-            <option value="dosen">Dosen</option>
-            <option value="staf">Staf Akademik</option>
-            <option value="organisasi">Organisasi</option>
-            <option value="admin">Admin</option>
+            <option value="mahasiswa" {{ request('role') === 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
+            <option value="dosen" {{ request('role') === 'dosen' ? 'selected' : '' }}>Dosen</option>
+            <option value="staf" {{ request('role') === 'staf' ? 'selected' : '' }}>Staf Akademik</option>
+            <option value="organisasi" {{ request('role') === 'organisasi' ? 'selected' : '' }}>Organisasi</option>
+            <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
         </select>
-        <select class="bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none min-w-[130px]">
+        <select name="status" onchange="this.form.submit()" class="bg-slate-50 border border-slate-200 rounded-lg py-2.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#002045]/20 outline-none min-w-[130px]">
             <option value="">Semua Status</option>
-            <option value="active">Aktif</option>
-            <option value="inactive">Nonaktif</option>
+            <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif</option>
+            <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
         </select>
-    </div>
+    </form>
 
     {{-- Tabel Pengguna --}}
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -107,40 +107,39 @@
                 <tbody class="divide-y divide-slate-100">
 
                     @php
-                    $users = [
-                        ['init'=>'AF','color'=>'blue','name'=>'Ahmad Fauzi','email'=>'ahmad.fauzi@masoem.ac.id','nim'=>'2010411032','role'=>'Mahasiswa','role_color'=>'emerald','joined'=>'Jan 2024','active'=>true],
-                        ['init'=>'SR','color'=>'purple','name'=>'Siti Rahayu','email'=>'siti.rahayu@masoem.ac.id','nim'=>'NIDN-19880112','role'=>'Dosen','role_color'=>'purple','joined'=>'Mar 2021','active'=>true],
-                        ['init'=>'AN','color'=>'orange','name'=>'Aditya Nugraha','email'=>'aditya.n@masoem.ac.id','nim'=>'2210411045','role'=>'Mahasiswa','role_color'=>'emerald','joined'=>'Aug 2022','active'=>true],
-                        ['init'=>'DL','color'=>'teal','name'=>'Diana Lestari','email'=>'diana.l@masoem.ac.id','nim'=>'NIP-197501152005','role'=>'Staf Akademik','role_color'=>'blue','joined'=>'Jun 2018','active'=>true],
-                        ['init'=>'BP','color'=>'red','name'=>'Bambang Pamungkas','email'=>'bambang.p@masoem.ac.id','nim'=>'2011411012','role'=>'Mahasiswa','role_color'=>'emerald','joined'=>'Feb 2023','active'=>false],
-                        ['init'=>'RM','color'=>'indigo','name'=>'Rina Marlina','email'=>'rina.m@masoem.ac.id','nim'=>'NIDN-19920305','role'=>'Dosen','role_color'=>'purple','joined'=>'Sep 2022','active'=>true],
-                    ];
-                    $colorMap = ['blue'=>'bg-blue-100 text-blue-800','purple'=>'bg-purple-100 text-purple-800','orange'=>'bg-orange-100 text-orange-800','teal'=>'bg-teal-100 text-teal-800','red'=>'bg-red-100 text-red-800','indigo'=>'bg-indigo-100 text-indigo-800'];
-                    $roleColorMap = ['emerald'=>'bg-emerald-50 text-emerald-700 border-emerald-200','purple'=>'bg-purple-50 text-purple-700 border-purple-200','blue'=>'bg-blue-50 text-blue-700 border-blue-200'];
+                        $colorMap = ['blue'=>'bg-blue-100 text-blue-800','purple'=>'bg-purple-100 text-purple-800','orange'=>'bg-orange-100 text-orange-800','teal'=>'bg-teal-100 text-teal-800','red'=>'bg-red-100 text-red-800','indigo'=>'bg-indigo-100 text-indigo-800'];
+                        $roleColorMap = ['mahasiswa'=>'bg-emerald-50 text-emerald-700 border-emerald-200','dosen'=>'bg-purple-50 text-purple-700 border-purple-200','staf'=>'bg-blue-50 text-blue-700 border-blue-200','organisasi'=>'bg-orange-50 text-orange-700 border-orange-200','admin'=>'bg-red-50 text-red-700 border-red-200'];
+                        $colors = ['blue', 'purple', 'orange', 'teal', 'indigo'];
                     @endphp
 
-                    @foreach ($users as $user)
+                    @forelse ($users as $user)
+                    @php
+                        $words = explode(' ', $user->name);
+                        $init = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                        $chosenColor = $colors[$user->id % count($colors)];
+                        $role_slug = strtolower($user->role);
+                    @endphp
                     <tr class="hover:bg-slate-50/50 transition-colors">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-full {{ $colorMap[$user['color']] }} flex items-center justify-center text-xs font-bold shrink-0">
-                                    {{ $user['init'] }}
+                                <div class="w-9 h-9 rounded-full {{ $colorMap[$chosenColor] }} flex items-center justify-center text-xs font-bold shrink-0">
+                                    {{ $init }}
                                 </div>
                                 <div>
-                                    <p class="text-sm font-bold text-slate-800">{{ $user['name'] }}</p>
-                                    <p class="text-xs text-slate-400">{{ $user['email'] }}</p>
+                                    <p class="text-sm font-bold text-slate-800">{{ $user->name }}</p>
+                                    <p class="text-xs text-slate-400">{{ $user->email }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-sm font-medium text-slate-600">{{ $user['nim'] }}</td>
+                        <td class="px-6 py-4 text-sm font-medium text-slate-600">{{ $user->identity_number }}</td>
                         <td class="px-6 py-4">
-                            <span class="px-2.5 py-1 text-[10px] font-bold rounded-full border {{ $roleColorMap[$user['role_color']] }} uppercase tracking-wider">
-                                {{ $user['role'] }}
+                            <span class="px-2.5 py-1 text-[10px] font-bold rounded-full border {{ $roleColorMap[$role_slug] ?? 'bg-slate-50 text-slate-700' }} uppercase tracking-wider">
+                                {{ $user->role }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-sm text-slate-500">{{ $user['joined'] }}</td>
+                        <td class="px-6 py-4 text-sm text-slate-500">{{ $user->created_at->format('M Y') }}</td>
                         <td class="px-6 py-4 text-center">
-                            @if ($user['active'])
+                            @if ($user->is_active)
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold rounded-full uppercase tracking-wider">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktif
                                 </span>
@@ -152,53 +151,40 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-1.5">
-                                <button onclick="openModal('editUserModal')"
+                                {{-- Edit --}}
+                                <button onclick="openEditUserModal('{{ $user->id }}', '{{ $user->name }}', '{{ $user->email }}', '{{ $user->identity_number }}')"
                                         class="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg transition-all" title="Edit">
                                     <span class="material-symbols-outlined text-sm">edit</span>
                                 </button>
-                                <button onclick="openModal('changeRoleModal')"
+                                {{-- Change Role --}}
+                                <button onclick="openChangeRoleModal('{{ $user->id }}', '{{ $user->name }}', '{{ $init }}', '{{ $role_slug }}')"
                                         class="p-1.5 bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white rounded-lg transition-all" title="Ubah Role">
                                     <span class="material-symbols-outlined text-sm">manage_accounts</span>
                                 </button>
-                                @if ($user['active'])
-                                    <button onclick="openModal('deactivateModal')"
-                                            class="p-1.5 bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white rounded-lg transition-all" title="Nonaktifkan">
-                                        <span class="material-symbols-outlined text-sm">block</span>
-                                    </button>
-                                @else
-                                    <button class="p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white rounded-lg transition-all" title="Aktifkan">
-                                        <span class="material-symbols-outlined text-sm">check_circle</span>
-                                    </button>
-                                @endif
-                                <button onclick="openModal('deleteUserModal')"
+                                {{-- Toggle Status --}}
+                                <button onclick="openToggleStatusModal('{{ $user->id }}', {{ $user->is_active ? 'true' : 'false' }})"
+                                        class="p-1.5 {{ $user->is_active ? 'bg-amber-50 text-amber-600 hover:bg-amber-600' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-600' }} hover:text-white rounded-lg transition-all" title="{{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}">
+                                    <span class="material-symbols-outlined text-sm">{{ $user->is_active ? 'block' : 'check_circle' }}</span>
+                                </button>
+                                {{-- Delete --}}
+                                <button onclick="openDeleteUserModal('{{ $user->id }}')"
                                         class="p-1.5 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all" title="Hapus">
                                     <span class="material-symbols-outlined text-sm">delete</span>
                                 </button>
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr><td colspan="6" class="px-6 py-8 text-center text-slate-500 text-sm">Tidak ditemukan pengguna yang sesuai.</td></tr>
+                    @endforelse
 
                 </tbody>
             </table>
         </div>
 
         {{-- Pagination --}}
-        <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p class="text-xs font-medium text-slate-500">Menampilkan 1-6 dari 124 pengguna</p>
-            <div class="flex items-center gap-1">
-                <button class="p-2 rounded-lg text-slate-400 border border-slate-200 bg-white disabled:opacity-50" disabled>
-                    <span class="material-symbols-outlined text-sm">chevron_left</span>
-                </button>
-                <button class="w-8 h-8 rounded-lg bg-[#002045] text-white text-xs font-bold shadow-sm">1</button>
-                <button class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold">2</button>
-                <button class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold">3</button>
-                <span class="px-2 text-slate-400">...</span>
-                <button class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-600 text-xs font-bold">21</button>
-                <button class="p-2 rounded-lg text-slate-600 border border-slate-200 bg-white hover:bg-slate-100">
-                    <span class="material-symbols-outlined text-sm">chevron_right</span>
-                </button>
-            </div>
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-200">
+            {{ $users->links() }}
         </div>
     </div>
 
@@ -215,23 +201,25 @@
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-4 bg-slate-50/50">
+        <form action="/admin/users/store" method="POST" class="p-6 overflow-y-auto space-y-4 bg-slate-50/50">
+            @csrf
             <div>
                 <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">Nama Lengkap</label>
-                <input type="text" placeholder="Masukkan nama lengkap" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                <input type="text" name="name" placeholder="Masukkan nama lengkap" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" required>
             </div>
             <div>
                 <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">Alamat Email</label>
-                <input type="email" placeholder="nama@masoem.ac.id" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                <input type="email" name="email" placeholder="nama@masoem.ac.id" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" required>
             </div>
             <div>
                 <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">NIM / NIDN</label>
-                <input type="text" placeholder="Masukkan NIM atau NIDN" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                <input type="text" name="identity_number" placeholder="Masukkan NIM atau NIDN" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" required>
             </div>
-            <div>
+           <div>
                 <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">Role</label>
-                <select class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                <select name="role" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" required>
                     <option value="">Pilih role pengguna</option>
+                    {{-- PASTIKAN VALUE-NYA HURUF KECIL SEMUA SEPERTI INI --}}
                     <option value="mahasiswa">Mahasiswa</option>
                     <option value="dosen">Dosen</option>
                     <option value="staf">Staf Akademik</option>
@@ -241,13 +229,13 @@
             </div>
             <div>
                 <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">Kata Sandi Awal</label>
-                <input type="password" placeholder="Minimal 8 karakter" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                <input type="password" name="password" placeholder="Minimal 8 karakter" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" required>
             </div>
-        </div>
-        <div class="px-6 py-4 bg-white border-t border-slate-200 flex justify-end gap-3">
-            <button onclick="closeModal('addUserModal')" class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50">Batal</button>
-            <button class="px-8 py-2.5 rounded-lg bg-primary-gradient text-white font-bold text-sm shadow-md hover:opacity-95">Simpan</button>
-        </div>
+            <div class="pt-4 flex justify-end gap-3">
+                <button type="button" onclick="closeModal('addUserModal')" class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50">Batal</button>
+                <button type="submit" class="px-8 py-2.5 rounded-lg bg-primary-gradient text-white font-bold text-sm shadow-md hover:opacity-95">Simpan</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -260,28 +248,30 @@
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-4 bg-slate-50/50">
+        <form id="editUserForm" action="" method="POST" class="p-6 overflow-y-auto space-y-4 bg-slate-50/50">
+            @csrf
+            @method('PUT')
             <div>
                 <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">Nama Lengkap</label>
-                <input type="text" value="Ahmad Fauzi" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                <input type="text" id="edit_name" name="name" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" required>
             </div>
             <div>
                 <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">Alamat Email</label>
-                <input type="email" value="ahmad.fauzi@masoem.ac.id" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                <input type="email" id="edit_email" name="email" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none" required>
             </div>
             <div>
                 <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">NIM / NIDN</label>
-                <input type="text" value="2010411032" class="w-full bg-slate-100 border border-slate-200 rounded-lg p-3.5 text-sm outline-none cursor-not-allowed" readonly>
+                <input type="text" id="edit_identity" class="w-full bg-slate-100 border border-slate-200 rounded-lg p-3.5 text-sm outline-none cursor-not-allowed" readonly>
             </div>
             <div>
                 <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">Reset Kata Sandi (opsional)</label>
-                <input type="password" placeholder="Kosongkan jika tidak diubah" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
+                <input type="password" name="password" placeholder="Kosongkan jika tidak diubah" class="w-full bg-white border border-slate-200 rounded-lg p-3.5 text-sm focus:ring-2 focus:ring-[#002045]/20 outline-none">
             </div>
-        </div>
-        <div class="px-6 py-4 bg-white border-t border-slate-200 flex justify-end gap-3">
-            <button onclick="closeModal('editUserModal')" class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50">Batal</button>
-            <button class="px-8 py-2.5 rounded-lg bg-[#002045] text-white font-bold text-sm shadow-md hover:opacity-95">Simpan Perubahan</button>
-        </div>
+            <div class="pt-4 flex justify-end gap-3">
+                <button type="button" onclick="closeModal('editUserModal')" class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50">Batal</button>
+                <button type="submit" class="px-8 py-2.5 rounded-lg bg-[#002045] text-white font-bold text-sm shadow-md hover:opacity-95">Simpan Perubahan</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -294,17 +284,20 @@
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        <div class="p-6 space-y-3 bg-slate-50/50">
+        <form id="changeRoleForm" action="" method="POST" class="p-6 space-y-3 bg-slate-50/50">
+            @csrf
+            @method('PUT')
             <div class="flex items-center gap-3 mb-4 p-3 bg-white border border-slate-200 rounded-lg">
-                <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center text-xs font-bold">AF</div>
+                <div id="role_avatar" class="w-9 h-9 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center text-xs font-bold"></div>
                 <div>
-                    <p class="text-sm font-bold text-slate-800">Ahmad Fauzi</p>
-                    <p class="text-xs text-slate-400">Role saat ini: <span class="font-bold text-emerald-600">Mahasiswa</span></p>
+                    <p id="role_user_name" class="text-sm font-bold text-slate-800"></p>
+                    <p class="text-xs text-slate-400">Pilih salah satu tingkatan berikut:</p>
                 </div>
             </div>
             <label class="block text-[11px] font-bold uppercase tracking-widests text-slate-500 mb-2">Pilih Role Baru</label>
+            
             @php
-            $roles = [
+            $rolesList = [
                 ['value'=>'mahasiswa','label'=>'Mahasiswa','desc'=>'Dapat mengajukan peminjaman ruangan','icon'=>'school','color'=>'emerald'],
                 ['value'=>'dosen','label'=>'Dosen','desc'=>'Akses prioritas peminjaman ruangan','icon'=>'person_pin','color'=>'purple'],
                 ['value'=>'staf','label'=>'Staf Akademik','desc'=>'Akses peminjaman untuk kegiatan kampus','icon'=>'badge','color'=>'blue'],
@@ -313,56 +306,104 @@
             ];
             @endphp
             <div class="space-y-2">
-                @foreach ($roles as $role)
-                <label class="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:border-[#002045]/30 hover:bg-blue-50/30 transition-all has-[:checked]:border-[#002045] has-[:checked]:bg-blue-50">
-                    <input type="radio" name="role_change" value="{{ $role['value'] }}" {{ $role['value'] === 'mahasiswa' ? 'checked' : '' }} class="accent-[#002045]">
+                @foreach ($rolesList as $rl)
+                <label class="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:border-[#002045]/30 hover:bg-blue-50/30 transition-all">
+                    <input type="radio" id="role_radio_{{ $rl['value'] }}" name="role_change" value="{{ $rl['label'] }}" class="accent-[#002045]">
                     <div class="flex-1">
-                        <p class="text-sm font-bold text-slate-800">{{ $role['label'] }}</p>
-                        <p class="text-[10px] text-slate-500">{{ $role['desc'] }}</p>
+                        <p class="text-sm font-bold text-slate-800">{{ $rl['label'] }}</p>
+                        <p class="text-[10px] text-slate-500">{{ $rl['desc'] }}</p>
                     </div>
                 </label>
                 @endforeach
             </div>
-        </div>
-        <div class="px-6 py-4 bg-white border-t border-slate-200 flex justify-end gap-3">
-            <button onclick="closeModal('changeRoleModal')" class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50">Batal</button>
-            <button class="px-8 py-2.5 rounded-lg bg-purple-600 text-white font-bold text-sm shadow-md hover:opacity-95">Simpan Role</button>
-        </div>
+            <div class="pt-4 flex justify-end gap-3">
+                <button type="button" onclick="closeModal('changeRoleModal')" class="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50">Batal</button>
+                <button type="submit" class="px-8 py-2.5 rounded-lg bg-purple-600 text-white font-bold text-sm shadow-md hover:opacity-95">Simpan Role</button>
+            </div>
+        </form>
     </div>
 </div>
 
-{{-- Modal Nonaktifkan --}}
+{{-- Modal Nonaktifkan / Aktifkan --}}
 <div id="deactivateModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-[#002045]/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl p-8 w-full max-w-sm text-center shadow-2xl mx-4">
-        <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-amber-100">
-            <span class="material-symbols-outlined text-3xl">block</span>
-        </div>
-        <h3 class="text-xl font-bold text-[#002045] font-headline mb-2">Nonaktifkan Pengguna?</h3>
-        <p class="text-sm text-slate-500 mb-8 leading-relaxed">Pengguna tidak akan bisa login hingga diaktifkan kembali.</p>
-        <div class="flex flex-col gap-3">
-            <button class="w-full py-3 rounded-lg bg-amber-500 text-white font-bold text-sm hover:bg-amber-600">Ya, Nonaktifkan</button>
-            <button onclick="closeModal('deactivateModal')" class="w-full py-3 rounded-lg text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">Batal</button>
-        </div>
+        <form id="deactivateForm" action="" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="w-16 h-16 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-amber-100">
+                <span class="material-symbols-outlined text-3xl">swap_horiz</span>
+            </div>
+            <h3 id="deactivateTitle" class="text-xl font-bold text-[#002045] font-headline mb-2">Ubah Status Pengguna?</h3>
+            <p id="deactivateDesc" class="text-sm text-slate-500 mb-8 leading-relaxed">Aksi ini akan mengganti status keaktifan user dalam sistem.</p>
+            <div class="flex flex-col gap-3">
+                <button type="submit" class="w-full py-3 rounded-lg bg-amber-500 text-white font-bold text-sm hover:bg-amber-600">Ya, Ubah Status</button>
+                <button type="button" onclick="closeModal('deactivateModal')" class="w-full py-3 rounded-lg text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">Batal</button>
+            </div>
+        </form>
     </div>
 </div>
 
 {{-- Modal Hapus --}}
 <div id="deleteUserModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-[#002045]/40 backdrop-blur-sm">
     <div class="bg-white rounded-2xl p-8 w-full max-w-sm text-center shadow-2xl mx-4">
-        <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-red-100">
-            <span class="material-symbols-outlined text-3xl">warning</span>
-        </div>
-        <h3 class="text-xl font-bold text-[#002045] font-headline mb-2">Hapus Pengguna?</h3>
-        <p class="text-sm text-slate-500 mb-8 leading-relaxed">Semua data pengguna termasuk riwayat peminjaman akan terhapus permanen.</p>
-        <div class="flex flex-col gap-3">
-            <button class="w-full py-3 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700">Ya, Hapus Permanen</button>
-            <button onclick="closeModal('deleteUserModal')" class="w-full py-3 rounded-lg text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">Batal</button>
-        </div>
+        <form id="deleteUserForm" action="" method="POST">
+            @csrf
+            @method('DELETE')
+            <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-red-100">
+                <span class="material-symbols-outlined text-3xl">warning</span>
+            </div>
+            <h3 class="text-xl font-bold text-[#002045] font-headline mb-2">Hapus Pengguna?</h3>
+            <p class="text-sm text-slate-500 mb-8 leading-relaxed">Semua data pengguna termasuk riwayat peminjaman akan terhapus permanen.</p>
+            <div class="flex flex-col gap-3">
+                <button type="submit" class="w-full py-3 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700">Ya, Hapus Permanen</button>
+                <button type="button" onclick="closeModal('deleteUserModal')" class="w-full py-3 rounded-lg text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">Batal</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <script>
     function openModal(id) { const m = document.getElementById(id); m.classList.remove('hidden'); m.classList.add('flex'); }
     function closeModal(id) { const m = document.getElementById(id); m.classList.add('hidden'); m.classList.remove('flex'); }
+
+    function openEditUserModal(id, name, email, identity) {
+        document.getElementById('editUserForm').action = `/admin/users/${id}`;
+        document.getElementById('edit_name').value = name;
+        document.getElementById('edit_email').value = email;
+        document.getElementById('edit_identity').value = identity;
+        openModal('editUserModal');
+    }
+
+    function openChangeRoleModal(id, name, init, roleSlug) {
+        document.getElementById('changeRoleForm').action = `/admin/users/${id}/role`;
+        document.getElementById('role_avatar').textContent = init;
+        document.getElementById('role_user_name').textContent = name;
+        
+        // Uncheck all radio first
+        ['mahasiswa', 'dosen', 'staf', 'organisasi', 'admin'].forEach(r => {
+            const rad = document.getElementById(`role_radio_${r}`);
+            if(rad) rad.checked = false;
+        });
+
+        // Check matching radio
+        const targetRadio = document.getElementById(`role_radio_${roleSlug}`);
+        if(targetRadio) targetRadio.checked = true;
+
+        openModal('changeRoleModal');
+    }
+
+    function openToggleStatusModal(id, isActive) {
+        document.getElementById('deactivateForm').action = `/admin/users/${id}/toggle-status`;
+        document.getElementById('deactivateTitle').textContent = isActive ? 'Nonaktifkan Pengguna?' : 'Aktifkan Pengguna?';
+        document.getElementById('deactivateDesc').textContent = isActive 
+            ? 'Pengguna tidak akan bisa login hingga diaktifkan kembali.' 
+            : 'Pengguna akan mendapatkan hak akses login kembali ke sistem.';
+        openModal('deactivateModal');
+    }
+
+    function openDeleteUserModal(id) {
+        document.getElementById('deleteUserForm').action = `/admin/users/${id}`;
+        openModal('deleteUserModal');
+    }
 </script>
 @endpush

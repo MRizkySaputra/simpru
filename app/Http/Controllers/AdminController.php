@@ -189,10 +189,109 @@ class AdminController extends Controller
     }
 
     // 5. Halaman Manajemen Pengguna
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::all();
-        return view('admin.users', compact('users'));
+        // 1. Hitung statistik untuk kartu
+        $totalUsersCount = \App\Models\User::count();
+        $mahasiswaCount = \App\Models\User::where('role', 'mahasiswa')->count();
+        $dosenCount = \App\Models\User::where('role', 'dosen')->count();
+        $inactiveCount = \App\Models\User::where('is_active', false)->count();
+
+        // 2. Query data user + fitur pencarian & filter
+        $query = \App\Models\User::query();
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%')
+                  ->orWhere('identity_number', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        if ($request->filled('status')) {
+            $statusVal = $request->status === 'active' ? true : false;
+            $query->where('is_active', $statusVal);
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
+
+        return view('admin.users', compact('users', 'totalUsersCount', 'mahasiswaCount', 'dosenCount', 'inactiveCount'));
+    }
+
+    public function storeUser(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'identity_number' => 'required|string|unique:users,identity_number',
+            'role' => 'required|string',
+            'password' => 'required|string|min:8',
+        ]);
+
+        // Pastikan role disingkat/diseragamkan ke format standar sistem jika ada perbedaan ENUM
+        // Mengambil kata pertama saja dan dijadikan lowercase (misal: "Staf Akademik" jadi "staf")
+        $safeRole = strtolower(explode(' ', $validated['role'])[0]);
+
+        \App\Models\User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'identity_number' => $validated['identity_number'],
+            'role' => $safeRole, // Pakai role yang sudah diseragamkan
+            'password' => bcrypt($validated['password']),
+            'is_active' => true,
+        ]);
+
+        return back()->with('success', 'Pengguna baru berhasil ditambahkan!');
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+        $user->save();
+
+        return back()->with('success', 'Data pengguna berhasil diperbarui!');
+    }
+
+    public function changeRole(Request $request, $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $user->role = $request->role_change;
+        $user->save();
+
+        return back()->with('success', 'Role pengguna berhasil diubah!');
+    }
+
+    public function toggleStatus($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $user->is_active = !$user->is_active;
+        $user->save();
+
+        return back()->with('success', 'Status pengguna berhasil diperbarui!');
+    }
+
+    public function deleteUser($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $user->delete();
+
+        return back()->with('success', 'Pengguna berhasil dihapus permanen!');
     }
 
     // 6. Halaman Laporan & Settings (Statis Sementara)
@@ -233,7 +332,7 @@ public function readAll()
     return back()->with('success', 'Semua notifikasi ditandai sebagai dibaca.');
 }
 
-    public function settings()
+   public function settings()
     {
         return view('admin.settings');
     }

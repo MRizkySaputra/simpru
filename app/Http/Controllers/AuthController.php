@@ -51,24 +51,41 @@ class AuthController extends Controller
     // Memproses pendaftaran
     public function registerProcess(Request $request)
     {
-
+        // 1. Validasi sangat ketat di server
+        // 1. Validasi sangat ketat di server
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'id_number' => 'required|string',
-            'role' => 'required|string',
-            'password' => 'required|min:8|confirmed'
+            'name'                  => 'required|string|max:255',
+            // Tambahkan :rfc,dns di bawah ini
+            'email'                 => 'required|email:rfc,dns|unique:users,email',
+            'id_number'             => 'required|string|unique:users,identity_number',
+            'role'                  => 'required|string',
+            'password'              => 'required|string|min:8|confirmed', 
+        ], [
+            'name.required'         => 'Nama lengkap tidak boleh kosong.',
+            'email.required'        => 'Email wajib diisi.',
+            // Tambahkan pesan error format email ini
+            'email.email'           => 'Format email tidak valid atau domain tidak ditemukan.',
+            'email.unique'          => 'Email ini sudah terdaftar.',
+            'id_number.required'    => 'NIM/NIDN wajib diisi.',
+            'id_number.unique'      => 'NIM/NIDN ini sudah terdaftar.',
+            'role.required'         => 'Silakan pilih peran/jabatan Anda.',
+            'password.required'     => 'Kata sandi tidak boleh kosong.',
+            'password.min'          => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed'    => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
-            'nim_nidn' => $validated['id_number'],
+        // 2. Simpan ke database
+        $user = \App\Models\User::create([
+            'name'            => $validated['name'],
+            'email'           => $validated['email'],
+            'identity_number' => $validated['id_number'],
+            'role'            => $validated['role'],
+            'password'        => bcrypt($validated['password']),
+            'is_active'       => true, 
         ]);
 
-        return redirect('/register-success');
+        // 3. Arahkan ke halaman sukses
+        return redirect('/register-success')->with('success', 'Akun berhasil dibuat!');
     }
 
     // Proses Logout
