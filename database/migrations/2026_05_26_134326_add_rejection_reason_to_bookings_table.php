@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('bookings', function (Blueprint $table) {
-            // Menambahkan kolom rejection_reason setelah kolom status
             $table->text('rejection_reason')->nullable()->after('status');
         });
     }

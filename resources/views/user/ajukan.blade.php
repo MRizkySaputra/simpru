@@ -35,7 +35,7 @@
 
     {{-- Filter Bar & Legenda --}}
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col xl:flex-row xl:items-center justify-between gap-4 transition-all">
-        
+
         <div class="flex flex-wrap items-center gap-4 px-2 shrink-0">
             <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-slate-300"></div><span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Kosong</span></div>
             <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-amber-400"></div><span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Menunggu</span></div>
@@ -176,7 +176,7 @@
 
 @push('scripts')
 <script>
-    let currentView = 'bulanan'; 
+    let currentView = 'bulanan';
     let currentDate = new Date();
 
     const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
@@ -205,10 +205,10 @@
             label.innerText = `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
         } else if (currentView === 'mingguan') {
             const startOfWeek = new Date(currentDate);
-            let dayIndex = startOfWeek.getDay() || 7; 
-            startOfWeek.setDate(startOfWeek.getDate() - dayIndex + 1); 
+            let dayIndex = startOfWeek.getDay() || 7;
+            startOfWeek.setDate(startOfWeek.getDate() - dayIndex + 1);
             const endOfWeek = new Date(startOfWeek);
-            endOfWeek.setDate(startOfWeek.getDate() + 6); 
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
             label.innerText = `${startOfWeek.getDate()} - ${endOfWeek.getDate()} ${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
         } else {
             label.innerText = formatDateLabel(currentDate);
@@ -218,13 +218,13 @@
     function jumpToDate(y, m, d) {
         currentDate = new Date(y, m, d, 0, 0, 0);
         switchView('harian');
-        window.scrollTo({ top: 150, behavior: 'smooth' }); 
+        window.scrollTo({ top: 150, behavior: 'smooth' });
     }
 
-    function jumpToWeeklyDay(dayIndex) { 
+    function jumpToWeeklyDay(dayIndex) {
         let d = new Date(currentDate);
-        let currentDay = d.getDay() || 7; 
-        d.setDate(d.getDate() - currentDay + 1 + dayIndex); 
+        let currentDay = d.getDay() || 7;
+        d.setDate(d.getDate() - currentDay + 1 + dayIndex);
         jumpToDate(d.getFullYear(), d.getMonth(), d.getDate());
     }
 
@@ -300,7 +300,7 @@
             roomsData.forEach(room => {
                 let slotEvent = allEvents.find(e => e.dateStr === dateStr && e.roomCode === room.code && h >= e.startHour && h < e.endHour);
                 let cfg = slotEvent ? (statusConfig[slotEvent.status] || statusConfig['menunggu']) : statusConfig['available'];
-                
+
                 html += `<div class="room-col flex-1 min-w-[160px] border-r border-slate-100 last:border-r-0 p-1 group relative bg-white" data-code="${room.code}" data-gedung="${room.gedung}">`;
                 if(slotEvent) {
                     html += `<div class="w-full h-14 rounded-lg ${cfg.bg} border ${cfg.border} px-2 py-1 relative overflow-hidden group/item cursor-pointer"
@@ -333,7 +333,7 @@
     function renderWeeklyCalendar() {
         const container = document.getElementById('view-mingguan-inner');
         const startOfWeek = new Date(currentDate);
-        let currentDayIndex = startOfWeek.getDay() || 7; 
+        let currentDayIndex = startOfWeek.getDay() || 7;
         startOfWeek.setDate(startOfWeek.getDate() - currentDayIndex + 1);
 
         let html = `<div class="w-full">
@@ -341,7 +341,7 @@
                 <div class="w-[60px] md:w-20 shrink-0 px-1 py-4 border-r border-slate-200 bg-slate-50 flex items-center justify-center">
                     <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widests">Jam</span>
                 </div>`;
-        
+
         for(let i=0; i<7; i++) {
             let d = new Date(startOfWeek); d.setDate(d.getDate() + i);
             html += `<div class="flex-1 w-0 px-1 lg:px-3 py-3 border-r border-slate-200 last:border-r-0 bg-slate-50 text-center cursor-pointer hover:bg-slate-200 transition-colors" onclick="jumpToWeeklyDay(${i})">
@@ -349,14 +349,14 @@
                     <p class="text-[8px] md:text-[10px] text-slate-400 font-medium mt-0.5">${d.getDate()} ${months[d.getMonth()].substring(0,3)}</p>
                 </div>`;
         }
-        
+
         html += `</div><div class="max-h-[600px] overflow-y-auto relative bg-slate-50 w-full">`;
         hours.forEach(h => {
             html += `<div class="flex border-b border-slate-100 last:border-b-0 hover:bg-slate-50/30 transition-colors h-auto min-h-[56px] w-full">
                         <div class="w-[60px] md:w-20 shrink-0 px-1 border-r border-slate-200 flex items-center justify-center bg-white">
                             <span class="text-[9px] md:text-[11px] font-bold text-slate-400">${padDate(h)}:00</span>
                         </div>`;
-            
+
             for(let d=0; d<7; d++) {
                 let colDate = new Date(startOfWeek); colDate.setDate(colDate.getDate() + d);
                 let colDateStr = toInputVal(colDate);
@@ -389,9 +389,9 @@
     function renderMonthlyCalendar() {
         const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
         let startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        let startDay = startOfMonth.getDay() || 7; 
+        let startDay = startOfMonth.getDay() || 7;
         let daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-        
+
         let dateCounter = 1;
         let todayStr = toInputVal(new Date());
 
@@ -399,7 +399,7 @@
             let isCurrentMonth = (i >= startDay && dateCounter <= daysInMonth);
             let actualDate = isCurrentMonth ? dateCounter++ : '';
             let dateStr = isCurrentMonth ? toInputVal(new Date(currentDate.getFullYear(), currentDate.getMonth(), actualDate)) : '';
-            let isToday = (dateStr === todayStr); 
+            let isToday = (dateStr === todayStr);
 
             let div = document.createElement('div');
             div.className = `min-h-[120px] p-2 border-b border-r border-slate-100 transition-all ${isCurrentMonth ? 'hover:bg-slate-50 cursor-pointer bg-white' : 'bg-slate-50/50'} ${i % 7 === 0 ? 'border-r-0' : ''}`;
@@ -409,7 +409,7 @@
             if (actualDate) {
                 html += `<span class="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${isToday ? 'bg-[#002045] text-white shadow-md' : 'text-slate-500'} mb-2">${actualDate}</span>`;
                 let dayEvents = allEvents.filter(e => e.dateStr === dateStr);
-                
+
                 dayEvents.sort((a,b) => a.startHour - b.startHour);
                 let uniqueEvents = [];
                 let seenKeys = new Set();
@@ -420,7 +420,7 @@
 
                 uniqueEvents.forEach(e => {
                     let cfg = statusConfig[e.status] || statusConfig['menunggu'];
-                    html += `<div class="monthly-event-item px-2 py-1 ${cfg.bg} ${cfg.text} text-[9px] font-bold rounded mb-1 truncate cursor-pointer hover:opacity-80 transition-opacity" 
+                    html += `<div class="monthly-event-item px-2 py-1 ${cfg.bg} ${cfg.text} text-[9px] font-bold rounded mb-1 truncate cursor-pointer hover:opacity-80 transition-opacity"
                                  title="${e.title}" data-code="${e.roomCode}" data-gedung="${e.gedung}" onclick="showBookingInfo('${e.roomCode}', ${e.startHour}, '${e.roomName}', '${e.gedung}', ${e.capacity}, '${e.img}', '${e.desc}', '${e.status}', '${e.booker}', '${e.title}'); event.stopPropagation();">
                                 ${padDate(e.startHour)}:00 - ${e.title}
                              </div>`;
@@ -490,17 +490,20 @@
     // Fungsi klik slot kosong
     function selectSlot(el, roomCode, hour, roomName, building, capacity, img, desc) {
         fillPopupBase(roomCode, hour, roomName, building, capacity, img, desc);
-        
+
         document.getElementById('popupStatusBadge').textContent = 'Tersedia';
         document.getElementById('popupStatusBadge').className = 'absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-500 text-white';
 
         document.getElementById('popupActionBooked').classList.add('hidden');
         document.getElementById('popupActionAvailable').classList.remove('hidden');
-        
+
         let dateVal = toInputVal(currentDate);
-        let url = `/user/ajukan-detail?roomName=${encodeURIComponent(roomName)}&building=${encodeURIComponent(building)}&capacity=${capacity}&img=${encodeURIComponent(img)}&date=${dateVal}&hour=${hour}&desc=${encodeURIComponent(desc)}`;
+        // Cari roomId dari roomsData berdasarkan roomCode
+        const roomObj = roomsData.find(r => r.name === roomName);
+        const roomId  = roomObj ? roomObj.id : '';
+        let url = `/user/ajukan-detail?roomId=${roomId}&date=${dateVal}&hour=${hour}`;
         document.getElementById('popupSelectBtn').href = url;
-        
+
         openPopup();
     }
 
@@ -515,14 +518,14 @@
         if (status === 'menunggu') {
             document.getElementById('popupStatusBadge').textContent = 'Menunggu';
             document.getElementById('popupStatusBadge').className = 'absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white';
-            
+
             alertBox.className = 'mb-4 p-3 rounded-lg flex items-start gap-2 border bg-amber-50 border-amber-200 text-amber-800';
             alertIcon.textContent = 'hourglass_empty';
             alertText.textContent = 'Ruangan ini sedang menunggu persetujuan Admin dan tidak dapat dipilih.';
         } else {
             document.getElementById('popupStatusBadge').textContent = 'Disetujui';
             document.getElementById('popupStatusBadge').className = 'absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500 text-white';
-            
+
             alertBox.className = 'mb-4 p-3 rounded-lg flex items-start gap-2 border bg-emerald-50 border-emerald-200 text-emerald-800';
             alertIcon.textContent = 'verified';
             alertText.textContent = 'Ruangan ini sudah disetujui peminjamannya dan tidak tersedia.';

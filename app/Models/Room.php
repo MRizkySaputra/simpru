@@ -7,9 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Room extends Model
 {
-    protected $fillable = ['code', 'name', 'building_id', 'capacity', 'facilities', 'code'];
+    use HasFactory;
 
-    // TAMBAHKAN INI:
+    protected $fillable = [
+        'code',
+        'name',
+        'building_id',
+        'capacity',
+        'facilities',
+        'image_path',
+    ];
+
     public function bookings()
     {
         return $this->hasMany(Booking::class);

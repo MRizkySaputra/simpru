@@ -25,63 +25,95 @@
                     </div>
                 </div>
                 <div class="text-center sm:text-left">
-                    <h3 class="text-xl font-bold text-[#002045] font-headline" id="displayName">{{ $user->name }}</h3>
-                    <span class="px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-full text-[10px] font-bold tracking-widest uppercase inline-block mt-2" id="displayRole">
+                    <h3 class="text-xl font-bold text-[#002045] font-headline">{{ $user->name }}</h3>
+                    <span class="px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-full text-[10px] font-bold tracking-widest uppercase inline-block mt-2">
                         {{ ucfirst($user->role) }}
                     </span>
                 </div>
             </div>
 
-            {{-- Form Edit (Sementara hanya tampilan UI) --}}
-            <form id="profileForm" action="#" method="POST" class="space-y-5">
+            {{-- Flash Message --}}
+            @if(session('success'))
+                <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-sm font-bold flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">check_circle</span>
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-lg">
+                    <ul class="list-disc pl-5 text-xs font-bold space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            {{-- Form Edit --}}
+            <form action="/user/profil" method="POST" class="space-y-5">
                 @csrf
 
-                {{-- Nama Lengkap --}}
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Nama Lengkap</label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">badge</span>
-                        <input id="inputName" name="name" type="text" value="{{ $user->name }}"
-                               class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] focus:bg-white outline-none transition-all">
+                        <input name="name" type="text" value="{{ old('name', $user->name) }}"
+                               class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] focus:bg-white outline-none transition-all"
+                               required>
                     </div>
                 </div>
 
-                {{-- Alamat Email --}}
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Alamat Email</label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">mail</span>
-                        <input id="inputEmail" name="email" type="email" value="{{ $user->email }}"
-                               class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] focus:bg-white outline-none transition-all">
+                        <input name="email" type="email" value="{{ old('email', $user->email) }}"
+                               class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] focus:bg-white outline-none transition-all"
+                               required>
                     </div>
                 </div>
 
-                {{-- NIM / NIDN --}}
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">NIM / NIDN</label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">pin</span>
-                        <input name="id_number" type="text" value="{{ $user->nim_nidn }}" readonly
+                        <input type="text" value="{{ $user->identity_number }}" readonly
                                class="w-full pl-11 pr-10 py-3 bg-slate-100 border border-slate-200 rounded-lg text-sm font-semibold text-slate-500 outline-none cursor-not-allowed">
                         <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">lock</span>
                     </div>
                     <p class="text-[10px] text-slate-400 mt-1.5 italic">NIM/NIDN tidak dapat diubah. Hubungi admin jika ada kesalahan.</p>
                 </div>
 
-                {{-- Peran / Jabatan --}}
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Peran / Jabatan</label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">work</span>
-                        <input name="role" type="text" value="{{ ucfirst($user->role) }}" readonly
-                            class="w-full pl-11 pr-10 py-3 bg-slate-100 border border-slate-200 rounded-lg text-sm font-semibold text-slate-500 outline-none cursor-not-allowed">
+                        <input type="text" value="{{ ucfirst($user->role) }}" readonly
+                               class="w-full pl-11 pr-10 py-3 bg-slate-100 border border-slate-200 rounded-lg text-sm font-semibold text-slate-500 outline-none cursor-not-allowed">
                         <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">lock</span>
                     </div>
                 </div>
 
-                {{-- Tombol Simpan (Visual Saja) --}}
+                {{-- Ganti Password (Opsional) --}}
+                <div class="pt-4 border-t border-slate-100">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Ganti Kata Sandi (opsional)</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Kata Sandi Baru</label>
+                            <input name="password" type="password" placeholder="Kosongkan jika tidak ingin mengubah"
+                                   class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] focus:bg-white outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Konfirmasi Kata Sandi Baru</label>
+                            <input name="password_confirmation" type="password" placeholder="Ulangi kata sandi baru"
+                                   class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#002045]/20 focus:border-[#002045] focus:bg-white outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="saveProfile()"
+                    <button type="submit"
                             class="px-8 py-2.5 bg-[#002045] text-white rounded-lg text-sm font-bold hover:bg-[#00152e] hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm">save</span>
                         Simpan Perubahan
@@ -92,7 +124,6 @@
 
         {{-- Kanan: Info Akun --}}
         <div class="lg:col-span-4 space-y-5">
-            {{-- Ringkasan Akun --}}
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
                 <h4 class="text-sm font-bold text-[#002045] font-headline flex items-center gap-2">
                     <span class="material-symbols-outlined text-base">manage_accounts</span> Ringkasan Akun
@@ -100,11 +131,13 @@
                 <div class="space-y-3">
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-slate-500 font-medium">Status</span>
-                        <span class="px-2 py-0.5 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-full font-bold">Aktif</span>
+                        <span class="px-2 py-0.5 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-full font-bold">
+                            {{ $user->is_active ? 'Aktif' : 'Nonaktif' }}
+                        </span>
                     </div>
                     <div class="flex justify-between items-center text-xs border-t border-slate-100 pt-3">
                         <span class="text-slate-500 font-medium">NIM / NIDN</span>
-                        <span class="font-bold text-slate-700">{{ $user->nim_nidn }}</span>
+                        <span class="font-bold text-slate-700">{{ $user->identity_number ?? '-' }}</span>
                     </div>
                     <div class="flex justify-between items-center text-xs border-t border-slate-100 pt-3">
                         <span class="text-slate-500 font-medium">Bergabung</span>
@@ -117,7 +150,6 @@
                 </div>
             </div>
 
-            {{-- Keamanan --}}
             <div class="bg-primary-gradient text-white rounded-2xl p-6 shadow-lg relative overflow-hidden">
                 <div class="relative z-10 space-y-3">
                     <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
