@@ -57,34 +57,39 @@ Route::prefix('admin')->group(function () {
     Route::put('/users/{id}/toggle-status', [AdminController::class, 'toggleStatus']);
     Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
     Route::get('/settings', [AdminController::class, 'settings']);
+    Route::get('/notifikasi', [AdminController::class, 'notifikasi']);
+    Route::get('/roles', [\App\Http\Controllers\AdminController::class, 'roles']);
+    Route::post('/roles/store', [\App\Http\Controllers\AdminController::class, 'storeRole']);
+    Route::put('/roles/{id}', [\App\Http\Controllers\AdminController::class, 'updateRole']);
+    Route::delete('/roles/{id}', [\App\Http\Controllers\AdminController::class, 'deleteRole']);
+    Route::get('/settings', [\App\Http\Controllers\AdminController::class, 'settings']);
+    Route::post('/settings', [\App\Http\Controllers\AdminController::class, 'updateSettings']); // Rute baru untuk simpan
+    // Rute Eksekusi Sistem & Zona Berbahaya
+    Route::post('/settings/clear-cache', [\App\Http\Controllers\AdminController::class, 'clearCache']);
+    Route::post('/settings/backup', [\App\Http\Controllers\AdminController::class, 'createBackup']);
+    Route::post('/settings/maintenance', [\App\Http\Controllers\AdminController::class, 'toggleMaintenance']);
+    Route::post('/settings/reset-data', [\App\Http\Controllers\AdminController::class, 'resetData']);
+    Route::post('/settings/factory-reset', [\App\Http\Controllers\AdminController::class, 'factoryReset']);
     
-    // Rute statis
-    Route::get('/notifikasi', function () { return view('admin.notifikasi'); });
-    Route::get('/detail-permohonan', function () { return view('admin.detail-permohonan'); });
-    Route::get('/roles', function () { return view('admin.roles'); });
-    Route::get('/roles/create', function () { return redirect('/admin/roles'); });
-    Route::get('/roles/edit', function () { return redirect('/admin/roles'); });
-    Route::post('/roles/create', function () { return redirect('/admin/roles'); });
-    Route::post('/roles/edit', function () { return redirect('/admin/roles'); });
 });
 
 // ==========================================
 // USER ROUTES (Mahasiswa/Peminjam)
 // ==========================================
-Route::prefix('user')->group(function () {
+Route::middleware(['auth'])->prefix('user')->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard']);
     Route::get('/riwayat', [UserController::class, 'riwayat']);
     Route::get('/profil', [UserController::class, 'profil']);
     
     // Rute Booking / Ajukan
     Route::get('/ajukan', [BookingController::class, 'ajukan']);
-    Route::get('/ajukan-detail', [BookingController::class, 'ajukanDetail']); // Mengarah ke Controller
+    Route::get('/ajukan-detail', [BookingController::class, 'ajukanDetail']);
     Route::post('/ajukan-proses', [BookingController::class, 'ajukanProses']);
     Route::post('/ajukan-konfirmasi', [BookingController::class, 'ajukanKonfirmasi']);
-    Route::post('/ajukan-proses', [BookingController::class, 'ajukanProses']);
     
     // Rute statis tambahan
     Route::get('/ajukan-konfirmasi', function () { return view('user.ajukan-konfirmasi'); });
     Route::get('/riwayat-detail/{id}', [UserController::class, 'riwayatDetail']);
+    Route::get('/riwayat-detail/{id}/cetak', [UserController::class, 'cetakBukti']);
     Route::get('/notifikasi', [UserController::class, 'notifikasi']);
 });

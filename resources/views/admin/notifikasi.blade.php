@@ -21,121 +21,78 @@
             </button>
         </div>
 
-        {{-- Daftar Notifikasi --}}
+        {{-- Daftar Notifikasi Dinamis --}}
         <div class="space-y-4">
             
-            {{-- Notifikasi Belum Dibaca 1 --}}
-            <div class="group relative flex items-start gap-6 p-6 bg-white rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-[#002045] transition-all hover:translate-x-1 hover:shadow-md">
-                <div class="mt-1 flex-shrink-0">
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-[#002045]">
-                        <span class="material-symbols-outlined">pending_actions</span>
-                    </div>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-start mb-1">
-                        <h3 class="font-headline font-bold text-slate-800 text-lg leading-tight">Permohonan Baru: Lab Multimedia A oleh Budi Santoso</h3>
-                        <span class="flex-shrink-0 ml-4 w-2.5 h-2.5 rounded-full bg-red-500 ring-4 ring-red-50" title="Belum dibaca"></span>
-                    </div>
-                    <p class="text-slate-500 text-sm mb-3">Seorang pengguna baru saja mengajukan peminjaman ruangan untuk kegiatan Workshop UI/UX.</p>
-                    <div class="flex items-center gap-4">
-                        <span class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                            <span class="material-symbols-outlined text-xs">schedule</span>
-                            2 menit yang lalu
-                        </span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest bg-red-50 text-red-600 border border-red-100">Urgent</span>
-                    </div>
-                </div>
-                <div class="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button class="text-[#002045] hover:underline text-sm font-bold">Detail Berkas</button>
-                </div>
-            </div>
+            @forelse($notifications as $notif)
+                {{-- Penentuan Warna & Icon Berdasarkan Tipe --}}
+                @php
+                    $bgClass = $notif->is_read ? 'bg-slate-50/50 grayscale hover:grayscale-0' : 'bg-white border-l-4 border-l-[#002045]';
+                    
+                    if($notif->type === 'urgent') {
+                        $iconBg = 'bg-red-50 text-red-600';
+                        $icon = 'priority_high';
+                        $badgeClass = 'bg-red-50 text-red-600 border-red-100';
+                    } elseif($notif->type === 'maintenance') {
+                        $iconBg = 'bg-orange-50 text-orange-600';
+                        $icon = 'cleaning_services';
+                        $badgeClass = 'bg-orange-50 text-orange-600 border-orange-100';
+                    } elseif($notif->type === 'report') {
+                        $iconBg = 'bg-slate-200 text-slate-500';
+                        $icon = 'file_download';
+                        $badgeClass = 'bg-slate-200 text-slate-600 border-slate-200';
+                    } else {
+                        // Default / Info System
+                        $iconBg = 'bg-blue-50 text-[#002045]';
+                        $icon = 'info';
+                        $badgeClass = 'bg-blue-50 text-[#002045] border-blue-100';
+                    }
+                @endphp
 
-            {{-- Notifikasi Belum Dibaca 2 --}}
-            <div class="group relative flex items-start gap-6 p-6 bg-white rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-[#002045] transition-all hover:translate-x-1 hover:shadow-md">
-                <div class="mt-1 flex-shrink-0">
-                    <div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600">
-                        <span class="material-symbols-outlined">cleaning_services</span>
+                <div class="group relative flex items-start gap-6 p-6 rounded-xl shadow-sm border border-slate-200 transition-all hover:translate-x-1 hover:shadow-md {{ $bgClass }}">
+                    <div class="mt-1 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center {{ $iconBg }}">
+                            <span class="material-symbols-outlined">{{ $icon }}</span>
+                        </div>
                     </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-headline font-bold text-slate-800 text-lg leading-tight">{{ $notif->title }}</h3>
+                            
+                            @if(!$notif->is_read)
+                                <span class="flex-shrink-0 ml-4 w-2.5 h-2.5 rounded-full bg-red-500 ring-4 ring-red-50" title="Belum dibaca"></span>
+                            @endif
+                        </div>
+                        <p class="text-slate-500 text-sm mb-3">{{ $notif->message }}</p>
+                        <div class="flex items-center gap-4">
+                            <span class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                <span class="material-symbols-outlined text-xs">schedule</span>
+                                {{ $notif->created_at->diffForHumans() }}
+                            </span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest border {{ $badgeClass }}">
+                                {{ $notif->type }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    @if($notif->action_link && $notif->action_text)
+                        <div class="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <a href="{{ $notif->action_link }}" class="text-[#002045] hover:underline text-sm font-bold">{{ $notif->action_text }}</a>
+                        </div>
+                    @endif
                 </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-start mb-1">
-                        <h3 class="font-headline font-bold text-slate-800 text-lg leading-tight">Ruangan R. Seminar 1 membutuhkan pembersihan</h3>
-                        <span class="flex-shrink-0 ml-4 w-2.5 h-2.5 rounded-full bg-red-500 ring-4 ring-red-50" title="Belum dibaca"></span>
-                    </div>
-                    <p class="text-slate-500 text-sm mb-3">Sesi peminjaman sebelumnya telah berakhir. Koordinasikan dengan tim fasilitas untuk pembersihan.</p>
-                    <div class="flex items-center gap-4">
-                        <span class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                            <span class="material-symbols-outlined text-xs">schedule</span>
-                            45 menit yang lalu
-                        </span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest bg-orange-50 text-orange-600 border border-orange-100">Maintenance</span>
-                    </div>
+            @empty
+                <div class="p-8 text-center bg-white rounded-xl border border-slate-200 text-slate-500">
+                    <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">notifications_off</span>
+                    <p class="font-medium mt-2">Belum ada notifikasi sistem saat ini.</p>
                 </div>
-                <div class="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button class="text-[#002045] hover:underline text-sm font-bold">Assign Tim</button>
-                </div>
-            </div>
-
-            {{-- Notifikasi Sudah Dibaca 1 --}}
-            <div class="group relative flex items-start gap-6 p-6 bg-slate-50/50 rounded-xl border border-slate-200 transition-all grayscale hover:grayscale-0 hover:bg-white hover:shadow-sm">
-                <div class="mt-1 flex-shrink-0">
-                    <div class="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center text-slate-500">
-                        <span class="material-symbols-outlined">file_download</span>
-                    </div>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-start mb-1">
-                        <h3 class="font-headline font-semibold text-slate-700 text-lg leading-tight">Laporan bulanan Oktober siap diunduh</h3>
-                    </div>
-                    <p class="text-slate-500 text-sm mb-3">Statistik penggunaan ruangan dan efisiensi operasional bulan Oktober telah dikompilasi.</p>
-                    <div class="flex items-center gap-4">
-                        <span class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                            <span class="material-symbols-outlined text-xs">schedule</span>
-                            3 jam yang lalu
-                        </span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest bg-slate-200 text-slate-600">Report</span>
-                    </div>
-                </div>
-                <div class="absolute right-6 bottom-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button class="text-[#002045] hover:underline text-sm font-bold">Download PDF</button>
-                </div>
-            </div>
-
-            {{-- Notifikasi Sudah Dibaca 2 --}}
-            <div class="group relative flex items-start gap-6 p-6 bg-slate-50/50 rounded-xl border border-slate-200 transition-all grayscale hover:grayscale-0 hover:bg-white hover:shadow-sm">
-                <div class="mt-1 flex-shrink-0">
-                    <div class="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center text-slate-500">
-                        <span class="material-symbols-outlined">verified_user</span>
-                    </div>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-start mb-1">
-                        <h3 class="font-headline font-semibold text-slate-700 text-lg leading-tight">Pembaruan Keamanan Sistem Selesai</h3>
-                    </div>
-                    <p class="text-slate-500 text-sm mb-3">Patch keamanan rutin v2.4.1 telah berhasil diterapkan pada modul manajemen database.</p>
-                    <div class="flex items-center gap-4">
-                        <span class="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                            <span class="material-symbols-outlined text-xs">schedule</span>
-                            Kemarin
-                        </span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest bg-slate-200 text-slate-600">System</span>
-                    </div>
-                </div>
-            </div>
+            @endforelse
 
         </div>
 
-        {{-- Footer & Pagination --}}
+        {{-- Footer & Pagination Dinamis --}}
         <div class="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p class="text-sm text-slate-500 font-medium">Menampilkan <span class="font-bold text-slate-800">4</span> dari <span class="font-bold text-slate-800">42</span> notifikasi terbaru.</p>
-            <div class="flex gap-2">
-                <button class="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-500 hover:text-[#002045] transition-colors shadow-sm">
-                    <span class="material-symbols-outlined">chevron_left</span>
-                </button>
-                <button class="p-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-500 hover:text-[#002045] transition-colors shadow-sm">
-                    <span class="material-symbols-outlined">chevron_right</span>
-                </button>
-            </div>
+            <p class="text-sm text-slate-500 font-medium">Menampilkan total <span class="font-bold text-slate-800">{{ $total ?? 0 }}</span> notifikasi.</p>
         </div>
 
     </div>

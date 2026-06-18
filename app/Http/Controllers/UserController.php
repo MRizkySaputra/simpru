@@ -44,6 +44,23 @@ class UserController extends Controller
         return view('user.riwayat-detail', compact('booking'));
     }
 
+    public function cetakBukti($id)
+{
+    $booking = \App\Models\Booking::with('room')->findOrFail($id);
+
+    // Pastikan hanya user pemilik booking atau admin yang bisa cetak
+    if (auth()->user()->role !== 'admin' && $booking->user_id !== auth()->id()) {
+        abort(403, 'Akses tidak sah.');
+    }
+
+    // Pastikan hanya yang disetujui yang bisa dicetak
+    if ($booking->status !== 'disetujui') {
+        return back()->with('error', 'Permohonan belum disetujui.');
+    }
+
+    return view('user.cetak-bukti', compact('booking'));
+}
+
     public function profil()
     {
         $user = Auth::user();
@@ -54,21 +71,27 @@ class UserController extends Controller
     }
 
     public function notifikasi()
-    {
-        $user = Auth::user();
-        
-        // Ambil semua riwayat peminjaman sebagai "notifikasi"
-        $notifications = Booking::with('room')
-                            ->where('user_id', $user->id)
-                            ->latest()
-                            ->get();
+{
+    // 1. Ambil user yang sedang login
+    $user = Auth::user();
 
-        // Hitung statistik untuk deretan kartu di atas
-        $total = $notifications->count();
-        $pending = $notifications->where('status', 'menunggu')->count();
-        $approved = $notifications->where('status', 'disetujui')->count();
-        $rejected = $notifications->where('status', 'ditolak')->count();
-
-        return view('user.notifikasi', compact('notifications', 'total', 'pending', 'approved', 'rejected'));
+    // 2. JAGA-JAGA: Jika $user null (user tidak login), arahkan ke login
+    if (!$user) {
+        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
     }
+
+    // 3. Ambil data dengan aman karena $user dipastikan ada
+    $notifications = Booking::with('room')
+                        ->where('user_id', $user->id)
+                        ->latest()
+                        ->get();
+
+    // 4. Hitung statistik
+    $total = $notifications->count();
+    $pending = $notifications->where('status', 'menunggu')->count();
+    $approved = $notifications->where('status', 'disetujui')->count();
+    $rejected = $notifications->where('status', 'ditolak')->count();
+
+    return view('user.notifikasi', compact('notifications', 'total', 'pending', 'approved', 'rejected'));
+}
 }

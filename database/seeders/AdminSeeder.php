@@ -14,7 +14,7 @@ class AdminSeeder extends Seeder
 {
     \App\Models\User::create([
         'name' => 'Super Admin',
-        'email' => 'admin@simpru.com',
+        'email' => 'admin@simpru.test',
         'password' => \Hash::make('password123'), // Kamu bisa ganti password-nya
         'role' => 'admin', // Sesuaikan dengan field role di database-mu
     ]);

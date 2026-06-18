@@ -10,17 +10,20 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('rooms', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('building_id')->constrained('buildings')->onDelete('cascade');
-        $table->string('code')->unique();
-        $table->string('name');
-        $table->integer('capacity');
-        $table->string('image_path')->nullable();
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('rooms', function (Blueprint $table) {
+            $table->id();
+            
+            // UBAH BARIS INI: Pakai string supaya bisa menerima teks/huruf seperti 'A', 'B'
+            $table->string('building_id'); 
+            
+            $table->string('code')->unique();
+            $table->string('name');
+            $table->integer('capacity');
+            $table->string('image_path')->nullable();
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

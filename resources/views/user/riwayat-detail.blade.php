@@ -134,16 +134,15 @@
             {{-- Tombol Cetak Bukti --}}
             <div class="mt-3">
                 @if($booking->status === 'disetujui')
-                    <button class="w-full py-3 px-4 rounded-lg bg-primary-gradient text-white font-bold flex items-center justify-center gap-2 hover:opacity-90">
-                        <span class="material-symbols-outlined text-xl">print</span> Cetak Bukti
-                    </button>
+                    <a href="/user/riwayat-detail/{{ $booking->id }}/cetak" target="_blank" class="w-full py-3 px-4 rounded-lg bg-primary-gradient text-white font-bold flex items-center justify-center gap-2 hover:opacity-90">
+                        <span class="material-symbols-outlined text-xl">print</span> Cetak Bukti Resmi
+                    </a>
                 @else
                     <button class="w-full py-3 px-4 rounded-lg bg-slate-200 text-slate-400 font-bold flex items-center justify-center gap-2 cursor-not-allowed" disabled>
                         <span class="material-symbols-outlined text-xl">print</span> Cetak Bukti (Belum Disetujui)
                     </button>
                 @endif
             </div>
-
         </div>
     </div>
 </div>

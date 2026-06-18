@@ -159,17 +159,27 @@
                         <label class="block text-xs font-bold text-[#002045] uppercase tracking-wider mb-2">Fasilitas Ruangan</label>
                         <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-4">
                             <p class="text-xs text-slate-500 mb-3 leading-relaxed">
-                                Ruangan ini dilengkapi dengan fasilitas berikut yang dapat Anda gunakan selama sesi peminjaman:
+                                Ruangan ini dilengkapi dengan fasilitas berikut:
                             </p>
                             
-                            {{-- Fasilitas --}}
+                            {{-- Logika Fasilitas Dinamis --}}
                             <div class="flex flex-wrap gap-2 mt-2">
-                                @forelse($fasilitas as $fac)
-                                    <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-100">
-                                        {{ $fac }}
-                                    </span>
+                                @php
+                                    // Jika fasilitas tersimpan sebagai JSON atau koma-koma
+                                    $rawFacilities = $room->facilities ?? ''; 
+                                    // Jika berupa string koma, pecah jadi array
+                                    $facilitiesArray = is_array($rawFacilities) ? $rawFacilities : explode(',', $rawFacilities);
+                                @endphp
+
+                                @forelse($facilitiesArray as $fac)
+                                    @if(trim($fac) != '')
+                                        <span class="px-3 py-1 bg-white text-blue-700 text-xs font-semibold rounded-full border border-blue-200 shadow-sm">
+                                            <span class="material-symbols-outlined text-[10px] mr-1 align-middle">check_circle</span>
+                                            {{ trim($fac) }}
+                                        </span>
+                                    @endif
                                 @empty
-                                    <span class="text-sm text-slate-500 italic">Fasilitas standar tersedia.</span>
+                                    <span class="text-xs text-slate-400 italic">Tidak ada fasilitas tambahan.</span>
                                 @endforelse
                             </div>
                         </div>

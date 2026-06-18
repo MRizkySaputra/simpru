@@ -7,6 +7,8 @@ use App\Models\Room;
 use App\Models\Building;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -294,6 +296,73 @@ class AdminController extends Controller
         return back()->with('success', 'Pengguna berhasil dihapus permanen!');
     }
 
+    // Halaman Manajemen Role
+    public function roles()
+    {
+        // Mengambil semua role dari database beserta hitungan usernya
+        $roles = \App\Models\Role::withCount('users')->get();
+        
+        // Daftar semua fitur/izin yang ada di aplikasi SIMPRU
+        $allPermissions = [
+            'Ajukan Peminjaman', 'Lihat Jadwal Publik', 'Lihat Riwayat Sendiri', 
+            'Setujui Permohonan', 'Tolak Permohonan', 'Kelola Ruangan', 
+            'Kelola Pengguna', 'Kelola Role', 'Lihat Semua Riwayat', 'Export Laporan'
+        ];
+
+        return view('admin.roles', compact('roles', 'allPermissions'));
+    }
+
+    public function storeRole(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|unique:roles,name',
+            'description' => 'nullable|string',
+            'permissions' => 'nullable|array',
+        ]);
+
+        \App\Models\Role::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'permissions' => $validated['permissions'] ?? [],
+            'icon' => 'verified_user', // Icon default
+            'color' => 'blue', // Warna default
+        ]);
+
+        return back()->with('success', 'Role baru berhasil ditambahkan!');
+    }
+
+    public function updateRole(Request $request, $id)
+    {
+        $role = \App\Models\Role::findOrFail($id);
+        
+        $validated = $request->validate([
+            'name' => 'required|string|unique:roles,name,' . $id,
+            'description' => 'nullable|string',
+            'permissions' => 'nullable|array',
+        ]);
+
+        $role->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'permissions' => $validated['permissions'] ?? [],
+        ]);
+
+        return back()->with('success', 'Role dan hak akses berhasil diperbarui!');
+    }
+
+    public function deleteRole($id)
+    {
+        $role = \App\Models\Role::findOrFail($id);
+        
+        // Mencegah akun Admin terhapus secara tidak sengaja
+        if (strtolower($role->name) === 'admin') {
+            return back()->with('error', 'Role Admin tidak dapat dihapus dari sistem!');
+        }
+        
+        $role->delete();
+        return back()->with('success', 'Role berhasil dihapus!');
+    }
+
     // 6. Halaman Laporan & Settings (Statis Sementara)
     public function laporan()
 {
@@ -319,21 +388,108 @@ class AdminController extends Controller
 
     public function notifikasi()
 {
-    // Mengambil notifikasi milik admin (atau global) yang terbaru
-    $notifications = auth()->user()->notifications()->latest()->paginate(10);
+    // Ambil semua notifikasi admin, urutkan dari yang terbaru
+    $notifications = \App\Models\AdminNotification::latest()->get();
     
-    return view('admin.notifikasi', compact('notifications'));
+    // Hitung total notifikasi
+    $total = $notifications->count();
+    
+    return view('admin.notifikasi', compact('notifications', 'total'));
 }
 
 // Fungsi untuk menandai semua dibaca
-public function readAll()
-{
-    auth()->user()->unreadNotifications->markAsRead();
-    return back()->with('success', 'Semua notifikasi ditandai sebagai dibaca.');
-}
+    public function readAll()
+    {
+        // Ubah status is_read menjadi true untuk semua notifikasi yang belum dibaca
+        \App\Models\AdminNotification::where('is_read', false)->update(['is_read' => true]);
+        
+        return back()->with('success', 'Semua notifikasi sistem telah ditandai sebagai dibaca.');
+    }
 
    public function settings()
+{
+    $settings = \App\Models\Setting::pluck('value', 'key')->toArray();
+    
+    // Ambil list file di folder backup
+    $files = Storage::disk('local')->files('Laravel'); 
+    
+    return view('admin.settings', compact('settings', 'files'));
+}
+
+    public function updateSettings(Request $request)
     {
-        return view('admin.settings');
+        // Ambil semua input KECUALI token CSRF dan file logo/favicon
+        $data = $request->except(['_token', 'app_logo', 'app_favicon']);
+
+        // Simpan setiap inputan ke tabel (Kalau sudah ada di-update, kalau belum dibuat baru)
+        foreach ($data as $key => $value) {
+            \App\Models\Setting::updateOrCreate(['key' => $key], ['value' => $value]);
+        }
+
+        // Khusus upload file Logo
+        if ($request->hasFile('app_logo')) {
+            $path = $request->file('app_logo')->store('settings', 'public');
+            \App\Models\Setting::updateOrCreate(['key' => 'app_logo'], ['value' => $path]);
+        }
+
+        // Khusus upload file Favicon
+        if ($request->hasFile('app_favicon')) {
+            $path = $request->file('app_favicon')->store('settings', 'public');
+            \App\Models\Setting::updateOrCreate(['key' => 'app_favicon'], ['value' => $path]);
+        }
+
+        return back()->with('success', 'Semua pengaturan berhasil disimpan ke database!');
+    }
+
+    // ==========================================
+    // FUNGSI SISTEM & ZONA BERBAHAYA
+    // ==========================================
+
+    public function clearCache()
+    {
+        // Mengeksekusi perintah terminal langsung dari PHP
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        return back()->with('success', 'Cache sistem berhasil dibersihkan! Performa aplikasi kembali optimal.');
+    }
+
+    public function createBackup()
+    {
+        try {
+            // Menjalankan backup database saja
+            \Illuminate\Support\Facades\Artisan::call('backup:run --only-db');
+            return back()->with('success', 'Backup database berhasil dibuat! File tersimpan di folder storage.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal backup: ' . $e->getMessage());
+        }
+    }
+
+    public function toggleMaintenance()
+    {
+        // Mengubah status maintenance di tabel settings (Aman, tidak me-lockout admin)
+        $current = \App\Models\Setting::where('key', 'maintenance_mode')->first();
+        $newStatus = ($current && $current->value == '1') ? '0' : '1';
+        
+        \App\Models\Setting::updateOrCreate(['key' => 'maintenance_mode'], ['value' => $newStatus]);
+        
+        $msg = $newStatus == '1' ? 'Mode Maintenance AKTIF! User tidak bisa login sementara.' : 'Mode Maintenance DIMATIKAN! Sistem kembali normal.';
+        return back()->with('success', $msg);
+    }
+
+    public function resetData()
+    {
+        // Menghapus seluruh riwayat peminjaman (aman dari error foreign key)
+        \App\Models\Booking::query()->delete();
+        
+        // Opsional: Hapus notifikasi juga biar bersih
+        \App\Models\AdminNotification::query()->delete();
+
+        return back()->with('success', 'ZONA BERBAHAYA: Seluruh data riwayat peminjaman dan notifikasi berhasil dihapus permanen!');
+    }
+
+    public function factoryReset()
+    {
+        // Menghapus seluruh konfigurasi agar kembali ke setelan awal
+        \App\Models\Setting::truncate();
+        return back()->with('success', 'ZONA BERBAHAYA: Seluruh pengaturan aplikasi telah dikembalikan ke setelan pabrik!');
     }
 }

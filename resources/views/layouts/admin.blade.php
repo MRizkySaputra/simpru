@@ -112,9 +112,19 @@
             <div class="flex items-center gap-4 flex-1">
             </div>
             <div class="flex items-center gap-4">
+                                @php
+                    // Cek jumlah notifikasi yang belum dibaca langsung dari layout
+                    $unreadNotifCount = \App\Models\AdminNotification::where('is_read', false)->count();
+                @endphp
                 <a href="/admin/notifikasi" class="relative text-slate-600 hover:text-[#002045] transition-colors p-2 hover:bg-slate-100 rounded-full">
                     <span class="material-symbols-outlined">notifications</span>
-                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full border-2 border-white"></span>
+                    
+                    {{-- Tampilkan angka merah hanya jika ada notifikasi baru --}}
+                    @if($unreadNotifCount > 0)
+                        <span class="absolute top-0 right-0 w-4 h-4 bg-red-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">
+                            {{ $unreadNotifCount }}
+                        </span>
+                    @endif
                 </a>
                 <div class="h-8 w-px bg-slate-200 mx-1"></div>
                 <div class="flex items-center gap-3">
