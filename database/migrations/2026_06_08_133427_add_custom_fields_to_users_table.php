@@ -9,17 +9,14 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            // Cek dan tambah identity_number jika belum ada
             if (!Schema::hasColumn('users', 'identity_number')) {
                 $table->string('identity_number')->unique()->nullable()->after('email');
             }
-            
-            // Cek dan tambah role jika belum ada
+
             if (!Schema::hasColumn('users', 'role')) {
                 $table->string('role')->default('mahasiswa')->after('identity_number');
             }
-            
-            // Cek dan tambah is_active jika belum ada
+
             if (!Schema::hasColumn('users', 'is_active')) {
                 $table->boolean('is_active')->default(true)->after('role');
             }

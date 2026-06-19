@@ -6,30 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-   public function up(): void
-{
-    Schema::create('facilities', function (Blueprint $table) {
-        $table->id();
-        $table->string('name');
-        $table->string('icon'); 
-        $table->timestamps();
-    });
+    public function up(): void
+    {
+        Schema::create('facilities', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('icon');
+            $table->timestamps();
+        });
 
-    Schema::create('room_facility', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
-        $table->foreignId('facility_id')->constrained('facilities')->onDelete('cascade');
-    });
-}
+        Schema::create('room_facility', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
+            $table->foreignId('facility_id')->constrained('facilities')->onDelete('cascade');
+        });
+    }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('facilities');
+        Schema::dropIfExists('room_facility');
     }
 };

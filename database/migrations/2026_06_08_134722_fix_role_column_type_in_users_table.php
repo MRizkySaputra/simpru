@@ -9,13 +9,12 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            // Memaksa kolom role yang lama berubah menjadi VARCHAR(255)
             $table->string('role', 255)->default('mahasiswa')->change();
         });
     }
 
     public function down()
     {
-        // Tidak perlu diisi untuk kasus perbaikan (fix) ini
+        //
     }
 };

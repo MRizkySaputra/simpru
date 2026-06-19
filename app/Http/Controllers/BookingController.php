@@ -11,26 +11,23 @@ class BookingController extends Controller
 {
     public function ajukan()
     {
-        // 1. Ambil data ruangan
         $dbRooms = \App\Models\Room::all();
         $rooms = $dbRooms->map(function($room) {
             return [
                 'code' => $room->code,
-                'gedung' => $room->building_id, 
+                'gedung' => $room->building_id,
                 'name' => $room->name,
                 'building' => 'Gedung ' . $room->building_id,
                 'capacity' => $room->capacity,
                 'img' => $room->image_path ? asset('storage/' . $room->image_path) : 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?auto=format&fit=crop&w=400&q=80',
-                'desc' => 'Fasilitas standar tersedia.' 
+                'desc' => 'Fasilitas standar tersedia.'
             ];
         })->toArray();
 
-        // 2. Ambil data booking yang nyata dari database
         $dbBookings = \App\Models\Booking::whereIn('status', ['menunggu', 'disetujui'])->get();
         $bookingsList = [];
-        
+
         foreach($dbBookings as $booking) {
-            // Cari ruangan yang sesuai dengan permohonan
             $room = \App\Models\Room::find($booking->room_id);
             if(!$room) continue;
 
@@ -46,24 +43,21 @@ class BookingController extends Controller
                 'endHour'   => (int) date('H', strtotime($booking->end_time)),
                 'status'    => strtolower($booking->status),
                 'title'     => $booking->activity_name,
-                'booker'    => 'Pemohon', // Opsional: Ganti dengan $booking->user->name jika kamu punya relasinya
+                'booker'    => 'Pemohon',
             ];
         }
 
-        // Kirim $rooms dan $bookingsList ke view User
         return view('user.ajukan', compact('rooms', 'bookingsList'));
     }
-    
-public function ajukanDetail(Request $request)
+
+    public function ajukanDetail(Request $request)
     {
         $selectedRoomName = $request->query('roomName');
         $selectedDate = $request->query('date');
         $selectedHour = $request->query('hour');
-        
-        // CARA PROPER: Cari ruangan berdasarkan nama dengan exact match
+
         $room = Room::where('name', $selectedRoomName)->first();
 
-        // Jika ruangan benar-benar tidak ada di database, lempar kembali dengan pesan error yang jelas
         if (!$room) {
             return redirect('/user/ajukan')->with('error', "Ruangan '{$selectedRoomName}' tidak ditemukan di database. Pastikan data seeder sesuai dengan nama di kalender.");
         }
@@ -82,7 +76,6 @@ public function ajukanDetail(Request $request)
 
     public function ajukanKonfirmasi(Request $request)
     {
-        // 1. Validasi & Cek Bentrok
         $validated = $request->validate([
             'room_id' => 'required|exists:rooms,id',
             'date' => 'required|date',
@@ -111,14 +104,11 @@ public function ajukanDetail(Request $request)
             return back()->withErrors(['room_id' => 'Maaf, ruangan ini sudah terpesan pada jam tersebut. Silakan pilih waktu lain.'])->withInput();
         }
 
-        // 2. Upload File (Agar tidak hilang saat pindah halaman)
         $filePath = $request->file('document_path')->store('documents', 'public');
         $validated['document_path'] = $filePath;
 
-        // 3. Ambil data ruangan
         $room = Room::find($validated['room_id']);
 
-        // 4. Buka halaman konfirmasi
         return view('user.ajukan-konfirmasi', compact('validated', 'room'));
     }
 
