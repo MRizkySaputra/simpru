@@ -25,20 +25,20 @@
             {{ session('success') }}
         </div>
         <script>
-            setTimeout(() => { 
+            setTimeout(() => {
                 const toast = document.getElementById('toast-success');
                 if(toast) { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }
             }, 4000);
         </script>
     @endif
-    
+
     @if(session('error'))
         <div id="toast-error" class="fixed bottom-6 right-6 z-50 bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-bold transition-all animate-bounce">
             <span class="material-symbols-outlined text-xl">error</span>
             {{ session('error') }}
         </div>
         <script>
-            setTimeout(() => { 
+            setTimeout(() => {
                 const toast = document.getElementById('toast-error');
                 if(toast) { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }
             }, 4000);
@@ -488,13 +488,28 @@
                 <span class="material-symbols-outlined text-3xl">delete_forever</span>
             </div>
             <h3 class="text-xl font-bold text-[#002045] font-headline mb-2">Reset Semua Data?</h3>
-            <p class="text-sm text-slate-500 mb-4 leading-relaxed">Seluruh data peminjaman akan dihapus permanen dan tidak dapat dipulihkan.</p>
+            <p class="text-sm text-slate-500 mb-4 leading-relaxed">
+                Seluruh data peminjaman akan dihapus permanen. Masukkan password Anda untuk konfirmasi.
+            </p>
             <form action="/admin/settings/reset-data" method="POST">
                 @csrf
-                <input type="text" required pattern="HAPUS" title="Ketik HAPUS huruf besar semua" placeholder='Ketik "HAPUS" untuk konfirmasi' class="w-full border border-red-200 bg-red-50 rounded-lg px-4 py-2.5 text-sm text-center mb-4 focus:ring-2 focus:ring-red-500/20 outline-none font-bold">
-                <div class="flex flex-col gap-3">
-                    <button type="submit" class="w-full py-3 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700">Hapus Semua Data</button>
-                    <button type="button" onclick="closeModal('resetModal')" class="w-full py-3 rounded-lg text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">Batal</button>
+                <input type="password"
+                    name="confirm_password"
+                    required
+                    placeholder="Masukkan password Anda"
+                    class="w-full border border-red-200 bg-red-50 rounded-lg px-4 py-2.5 text-sm text-center mb-2 focus:ring-2 focus:ring-red-500/20 outline-none">
+
+                @if($errors->has('confirm_password'))
+                    <p class="text-xs text-red-600 mb-2">{{ $errors->first('confirm_password') }}</p>
+                @endif
+
+                <div class="flex flex-col gap-3 mt-3">
+                    <button type="submit" class="w-full py-3 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700">
+                        Hapus Semua Data
+                    </button>
+                    <button type="button" onclick="closeModal('resetModal')" class="w-full py-3 rounded-lg text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">
+                        Batal
+                    </button>
                 </div>
             </form>
         </div>
@@ -507,11 +522,29 @@
                 <span class="material-symbols-outlined text-3xl">restart_alt</span>
             </div>
             <h3 class="text-xl font-bold text-[#002045] font-headline mb-2">Factory Reset?</h3>
-            <p class="text-sm text-slate-500 mb-6 leading-relaxed">Semua pengaturan akan dikembalikan ke nilai bawaan. Data tidak akan terhapus.</p>
-            <form action="/admin/settings/factory-reset" method="POST" class="flex flex-col gap-3">
+            <p class="text-sm text-slate-500 mb-4 leading-relaxed">
+                Semua pengaturan akan dikembalikan ke nilai bawaan. Data peminjaman tidak akan terhapus. Masukkan password Anda untuk konfirmasi.
+            </p>
+            <form action="/admin/settings/factory-reset" method="POST">
                 @csrf
-                <button type="submit" class="w-full py-3 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700">Ya, Reset Pengaturan</button>
-                <button type="button" onclick="closeModal('factoryModal')" class="w-full py-3 rounded-lg text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">Batal</button>
+                <input type="password"
+                    name="confirm_password"
+                    required
+                    placeholder="Masukkan password Anda"
+                    class="w-full border border-red-200 bg-red-50 rounded-lg px-4 py-2.5 text-sm text-center mb-2 focus:ring-2 focus:ring-red-500/20 outline-none">
+
+                @if($errors->has('confirm_password'))
+                    <p class="text-xs text-red-600 mb-2">{{ $errors->first('confirm_password') }}</p>
+                @endif
+
+                <div class="flex flex-col gap-3 mt-3">
+                    <button type="submit" class="w-full py-3 rounded-lg bg-red-600 text-white font-bold text-sm hover:bg-red-700">
+                        Ya, Reset Pengaturan
+                    </button>
+                    <button type="button" onclick="closeModal('factoryModal')" class="w-full py-3 rounded-lg text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50">
+                        Batal
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -524,7 +557,7 @@
     function switchTab(name) {
         // Sembunyikan semua panel
         document.querySelectorAll('.settings-panel').forEach(p => p.classList.add('hidden'));
-        
+
         // Reset warna semua tombol tab
         document.querySelectorAll('.settings-tab').forEach(t => {
             t.className = 'settings-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-[#002045] text-left transition-all';
@@ -533,7 +566,7 @@
         // Tampilkan panel yang dipilih
         const panel = document.getElementById('panel-' + name);
         if (panel) panel.classList.remove('hidden');
-        
+
         // Beri warna aktif pada tombol tab yang dipilih
         const activeTab = document.getElementById('tab-' + name);
         if (activeTab) activeTab.className = 'settings-tab w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-[#002045] bg-blue-50 border-l-4 border-[#002045] text-left transition-all';
