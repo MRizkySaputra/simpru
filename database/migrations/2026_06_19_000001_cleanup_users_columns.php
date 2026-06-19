@@ -24,10 +24,6 @@ return new class extends Migration
                 $table->dropColumn('phone_number');
             }
         });
-
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('identity_number')->nullable(false)->unique()->change();
-        });
     }
 
     public function down(): void
