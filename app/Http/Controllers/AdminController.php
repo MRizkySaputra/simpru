@@ -6,6 +6,8 @@ use App\Models\Room;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -13,7 +15,9 @@ class AdminController extends Controller
     {
         $stats = [
             'total_ruangan' => Room::count(),
-            'ruangan_tersedia' => Room::count(),
+            'ruangan_tersedia' => Room::whereDoesntHave('bookings', function($q) {
+                $q->where('status', 'disetujui')->whereDate('date', date('Y-m-d'));
+            })->count(),
             'total_permohonan' => Booking::count(),
             'permohonan_menunggu' => Booking::where('status', 'menunggu')->count(),
             'total_disetujui' => Booking::where('status', 'disetujui')->count(),
@@ -205,17 +209,15 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'identity_number' => 'required|string|unique:users,identity_number',
-            'role' => 'required|string',
+            'role' => 'required|in:mahasiswa,dosen,staf,organisasi,admin',
             'password' => 'required|string|min:8',
         ]);
-
-        $safeRole = strtolower(explode(' ', $validated['role'])[0]);
 
         \App\Models\User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'identity_number' => $validated['identity_number'],
-            'role' => $safeRole,
+            'role' => $validated['role'],
             'password' => bcrypt($validated['password']),
             'is_active' => true,
         ]);
@@ -421,17 +423,52 @@ class AdminController extends Controller
         return back()->with('success', $msg);
     }
 
-    public function resetData()
+    public function resetData(Request $request)
     {
+        $request->validate([
+            'confirm_password' => 'required|string',
+        ], [
+            'confirm_password.required' => 'Password konfirmasi wajib diisi.',
+        ]);
+
+        if (!Hash::check($request->confirm_password, Auth::user()->password)) {
+            return back()->with('error', 'Password konfirmasi salah. Aksi dibatalkan.');
+        }
+
         \App\Models\Booking::query()->delete();
         \App\Models\AdminNotification::query()->delete();
+
+        \Illuminate\Support\Facades\Log::warning('ZONA BERBAHAYA: Reset data peminjaman dieksekusi', [
+            'admin_id' => Auth::id(),
+            'admin_email' => Auth::user()->email,
+            'ip' => $request->ip(),
+            'timestamp' => now(),
+        ]);
 
         return back()->with('success', 'ZONA BERBAHAYA: Seluruh data riwayat peminjaman dan notifikasi berhasil dihapus permanen!');
     }
 
-    public function factoryReset()
+    public function factoryReset(Request $request)
     {
+        $request->validate([
+            'confirm_password' => 'required|string',
+        ], [
+            'confirm_password.required' => 'Password konfirmasi wajib diisi.',
+        ]);
+
+        if (!Hash::check($request->confirm_password, Auth::user()->password)) {
+            return back()->with('error', 'Password konfirmasi salah. Aksi dibatalkan.');
+        }
+
         \App\Models\Setting::truncate();
+
+        \Illuminate\Support\Facades\Log::warning('ZONA BERBAHAYA: Factory reset pengaturan dieksekusi', [
+            'admin_id' => Auth::id(),
+            'admin_email' => Auth::user()->email,
+            'ip' => $request->ip(),
+            'timestamp' => now(),
+        ]);
+
         return back()->with('success', 'ZONA BERBAHAYA: Seluruh pengaturan aplikasi telah dikembalikan ke setelan pabrik!');
     }
 }

@@ -9,7 +9,19 @@ use Illuminate\Http\Request;
 class Booking extends Model
 {
     use HasFactory;
-    protected $guarded = ['id'];
+
+    protected $fillable = [
+        'req_id',
+        'user_id',
+        'room_id',
+        'date',
+        'start_time',
+        'end_time',
+        'activity_type',
+        'activity_name',
+        'participants',
+        'document_path',
+    ];
 
     public function user()
     {

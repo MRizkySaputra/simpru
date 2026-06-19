@@ -15,10 +15,10 @@ class InitialDataSeeder extends Seeder
         User::create([
             'name' => 'Admin SIMPRU',
             'email' => 'admin@simpru.com',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make(env('ADMIN_INITIAL_PASSWORD', 'GantiSegera123!')),
             'role' => 'admin',
-            'nim_nidn' => '12345678',
-            'phone_number' => '081234567890',
+            'identity_number' => '12345678',
+            'is_active' => true,
         ]);
 
         $gedungA = Building::create([

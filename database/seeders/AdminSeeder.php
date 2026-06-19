@@ -12,7 +12,7 @@ class AdminSeeder extends Seeder
         \App\Models\User::create([
             'name' => 'Super Admin',
             'email' => 'admin@simpru.test',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make(env('ADMIN_INITIAL_PASSWORD', 'GantiSegera123!')),
             'role' => 'admin',
         ]);
     }

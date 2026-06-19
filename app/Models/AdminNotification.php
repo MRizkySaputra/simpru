@@ -9,5 +9,12 @@ class AdminNotification extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'title',
+        'message',
+        'type',
+        'is_read',
+        'action_link',
+        'action_text',
+    ];
 }
