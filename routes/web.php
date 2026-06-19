@@ -38,6 +38,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/jadwal', [AdminController::class, 'jadwal']);
     Route::get('/users', [AdminController::class, 'users']);
     Route::get('/laporan', [AdminController::class, 'laporan']);
+    Route::get('/detail-permohonan/{id}', [AdminController::class, 'detailPermohonan']);
     Route::post('/proses-permohonan/{id}', [AdminController::class, 'prosesPermohonan']);
     Route::post('/users/store', [AdminController::class, 'storeUser']);
     Route::put('/users/{id}', [AdminController::class, 'updateUser']);
