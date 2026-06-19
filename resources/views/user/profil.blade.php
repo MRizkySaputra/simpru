@@ -61,7 +61,7 @@
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">NIM / NIDN</label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">pin</span>
-                        <input name="id_number" type="text" value="{{ $user->nim_nidn }}" readonly
+                        <input name="id_number" type="text" value="{{ $user->identity_number }}" readonly
                                class="w-full pl-11 pr-10 py-3 bg-slate-100 border border-slate-200 rounded-lg text-sm font-semibold text-slate-500 outline-none cursor-not-allowed">
                         <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">lock</span>
                     </div>
@@ -104,7 +104,7 @@
                     </div>
                     <div class="flex justify-between items-center text-xs border-t border-slate-100 pt-3">
                         <span class="text-slate-500 font-medium">NIM / NIDN</span>
-                        <span class="font-bold text-slate-700">{{ $user->nim_nidn }}</span>
+                        <span class="font-bold text-slate-700">{{ $user->identity_number }}</span>
                     </div>
                     <div class="flex justify-between items-center text-xs border-t border-slate-100 pt-3">
                         <span class="text-slate-500 font-medium">Bergabung</span>
