@@ -15,7 +15,9 @@ class AdminController extends Controller
     {
         $stats = [
             'total_ruangan' => Room::count(),
-            'ruangan_tersedia' => Room::count(),
+            'ruangan_tersedia' => Room::whereDoesntHave('bookings', function($q) {
+                $q->where('status', 'disetujui')->whereDate('date', date('Y-m-d'));
+            })->count(),
             'total_permohonan' => Booking::count(),
             'permohonan_menunggu' => Booking::where('status', 'menunggu')->count(),
             'total_disetujui' => Booking::where('status', 'disetujui')->count(),

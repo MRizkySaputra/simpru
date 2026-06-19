@@ -78,7 +78,7 @@ class BookingController extends Controller
     {
         $validated = $request->validate([
             'room_id' => 'required|exists:rooms,id',
-            'date' => 'required|date',
+            'date' => 'required|date|after_or_equal:today', 
             'start_time' => 'required',
             'end_time' => 'required|after:start_time',
             'activity_name' => 'required|string|max:255',
@@ -87,6 +87,13 @@ class BookingController extends Controller
             'document_path' => 'required|file|mimes:pdf|max:5120',
             'purpose' => 'required|string'
         ]);
+
+        $room = Room::findOrFail($validated['room_id']);
+        if ($validated['participants'] > $room->capacity) {
+            return back()->withErrors([
+                'participants' => "Jumlah peserta melebihi kapasitas ruangan ({$room->capacity} orang)."
+            ])->withInput();
+        }
 
         $isBooked = Booking::where('room_id', $validated['room_id'])
             ->where('date', $validated['date'])

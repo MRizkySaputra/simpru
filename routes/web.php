@@ -8,10 +8,12 @@ use App\Http\Controllers\AdminController;
 
 Route::redirect('/', '/login');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/login-process', [AuthController::class, 'loginProcess']);
+Route::post('/login-process', [AuthController::class, 'loginProcess'])
+    ->middleware('throttle:5,1');
 
 Route::get('/register', [AuthController::class, 'register']);
-Route::post('/register-process', [AuthController::class, 'registerProcess']);
+Route::post('/register-process', [AuthController::class, 'registerProcess'])
+    ->middleware('throttle:5,1');
 Route::get('/register-success', function () {
     return view('auth.register-success');
 });
@@ -36,7 +38,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/jadwal', [AdminController::class, 'jadwal']);
     Route::get('/users', [AdminController::class, 'users']);
     Route::get('/laporan', [AdminController::class, 'laporan']);
-    Route::get('/detail-permohonan/{id}', [AdminController::class, 'detailPermohonan']);
     Route::post('/proses-permohonan/{id}', [AdminController::class, 'prosesPermohonan']);
     Route::post('/users/store', [AdminController::class, 'storeUser']);
     Route::put('/users/{id}', [AdminController::class, 'updateUser']);
