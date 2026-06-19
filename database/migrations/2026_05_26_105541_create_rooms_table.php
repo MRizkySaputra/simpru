@@ -6,17 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            
-            // UBAH BARIS INI: Pakai string supaya bisa menerima teks/huruf seperti 'A', 'B'
-            $table->string('building_id'); 
-            
+            $table->string('building_id');
             $table->string('code')->unique();
             $table->string('name');
             $table->integer('capacity');
@@ -25,9 +19,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('rooms');

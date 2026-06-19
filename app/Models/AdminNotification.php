@@ -9,5 +9,5 @@ class AdminNotification extends Model
 {
     use HasFactory;
 
-    protected $guarded = []; 
+    protected $guarded = [];
 }
