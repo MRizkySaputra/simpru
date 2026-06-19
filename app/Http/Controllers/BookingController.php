@@ -116,7 +116,7 @@ class BookingController extends Controller
     {
         $reqId = 'REQ-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
 
-        Booking::create([
+        $booking = Booking::create([
             'req_id' => $reqId,
             'user_id' => Auth::id(),
             'room_id' => $request->room_id,
@@ -127,8 +127,10 @@ class BookingController extends Controller
             'activity_type' => $request->activity_type,
             'participants' => $request->participants,
             'document_path' => $request->document_path,
-            'status' => 'menunggu',
         ]);
+
+        $booking->status = 'menunggu';
+        $booking->save();
 
         return redirect('/user/riwayat')->with('success', 'Permohonan dan dokumen berhasil diajukan!');
     }
